@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Prompt Builder Studio</title>
+  <style>
+    :root{--bg:#f5f7ff;--card:#fff;--ink:#172033;--muted:#5d6780;--line:#dfe6f5;--primary:#3157d5;--primary2:#00a6a6;--accent:#ff8a3d;--soft:#eef3ff;--soft2:#e9fbfb;--soft3:#fff0e6;--shadow:0 18px 44px rgba(28,43,95,.14);--radius:20px;--font:"Segoe UI",Roboto,Arial,Helvetica,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(49,87,213,.18),transparent 28rem),radial-gradient(circle at top right,rgba(255,138,61,.18),transparent 26rem),linear-gradient(180deg,#fff 0,#f5f7ff 42%,#edf4ff 100%);color:var(--ink);font-family:var(--font);line-height:1.55}.app{max-width:1320px;margin:auto;padding:22px}.hero{background:linear-gradient(135deg,#3157d5,#00a6a6);color:#fff;border-radius:30px;padding:clamp(28px,5vw,56px);box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;right:-90px;top:-120px;width:330px;height:330px;border-radius:50%;background:rgba(255,255,255,.14)}.hero>*{position:relative;z-index:1}.eyebrow{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 12px;font-weight:800;margin-bottom:15px}h1{margin:0;font-size:clamp(2rem,5vw,4rem);line-height:1.03;letter-spacing:-.05em;max-width:900px}.hero p{font-size:clamp(1rem,1.7vw,1.22rem);max-width:860px;color:rgba(255,255,255,.93)}button,.btn{border:0;border-radius:12px;padding:.78rem 1rem;background:var(--primary);color:#fff;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 18px rgba(49,87,213,.22)}button:hover,.btn:hover{filter:brightness(.94);transform:translateY(-1px)}.btn.ghost{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);box-shadow:none}.secondary{background:#fff;color:var(--primary);border:1px solid rgba(49,87,213,.22);box-shadow:0 8px 18px rgba(31,45,92,.1)}.small{padding:.56rem .76rem;font-size:.85rem}.hero-actions,.row,.actions{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin-top:22px;background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:10;backdrop-filter:blur(10px)}.tab{background:transparent;color:var(--muted);box-shadow:none}.tab.active{background:var(--primary);color:#fff;box-shadow:0 8px 20px rgba(49,87,213,.22)}.panel{display:none;margin-top:22px}.panel.active{display:block}.grid{display:grid;grid-template-columns:minmax(330px,470px) minmax(0,1fr);gap:22px;align-items:start}.card,.box,.example{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.head{padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(49,87,213,.08),rgba(0,166,166,.06))}.head h2,.head h3{margin:0;font-size:1.15rem}.head p{margin:6px 0 0;color:var(--muted);font-size:.92rem}.body{padding:20px}.field{margin-bottom:16px}.label,label{display:block;font-size:.89rem;font-weight:850;margin-bottom:7px;color:#25314a}.hint{font-size:.82rem;color:var(--muted);margin:6px 0 0}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:.78rem .86rem;font:inherit}textarea{min-height:88px;resize:vertical}.output{min-height:420px;font-family:Consolas,"Courier New",monospace;font-size:.92rem;line-height:1.55;background:linear-gradient(#fff,#f9fbff)}input:focus,select:focus,textarea:focus,button:focus{outline:3px solid rgba(49,87,213,.22);outline-offset:2px;border-color:var(--primary)}.frameworks{display:grid;gap:10px}.framework{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:13px;border-radius:15px;border:1px solid var(--line);background:#fff;cursor:pointer}.framework:hover,.framework:has(input:checked){border-color:var(--primary);background:var(--soft)}.framework input{margin-top:4px;width:18px;height:18px;accent-color:var(--primary)}.framework strong{display:block}.framework span{display:block;color:var(--muted);font-size:.83rem}.section{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;margin-top:16px}.section h3{margin:0 0 12px;color:var(--primary);font-size:1rem}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.pills{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{border:1px solid #dbe4ff;background:#f3f6ff;border-radius:999px;padding:5px 9px;font-size:.75rem;font-weight:850}.checks{display:grid;gap:9px}.check{border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px 12px;display:flex;justify-content:space-between;gap:10px}.check strong{display:block;font-size:.87rem}.check span{display:block;color:var(--muted);font-size:.78rem}.badge{border-radius:999px;padding:4px 8px;font-size:.72rem;font-weight:900;white-space:nowrap}.good{background:#e9f8ef;color:#17613a}.warn{background:#fff6df;color:#8a4b00}.cards4,.examples,.instructions{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cards4{grid-template-columns:repeat(4,1fr)}.mini{padding:18px;border-radius:18px;border:1px solid var(--line);background:#fff;box-shadow:0 12px 28px rgba(31,45,92,.08)}.mini:nth-child(1){background:var(--soft)}.mini:nth-child(2){background:var(--soft2)}.mini:nth-child(3){background:#f4efff}.mini:nth-child(4){background:var(--soft3)}.mini h3,.box h2,.box h3,.example h3{margin-top:0;color:var(--primary)}pre{white-space:pre-wrap;background:#101a33;color:#f4f7ff;padding:14px;border-radius:14px;overflow:auto;font-family:Consolas,"Courier New",monospace;font-size:.85rem}.box{padding:20px}.callout{border-left:6px solid var(--accent);background:var(--soft3);padding:14px 16px;border-radius:14px;margin-top:14px}.footer{text-align:center;color:var(--muted);margin:28px 0 8px;font-size:.9rem}@media(max-width:1050px){.grid,.instructions{grid-template-columns:1fr}.cards4{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.app{padding:12px}.hero{border-radius:22px}.two,.cards4,.examples{grid-template-columns:1fr}.tabs{position:static}.tab{flex:1 1 100%}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="eyebrow">Prompt Builder Studio</div>
+    <h1>Build stronger AI prompts without wrestling the blank box.</h1>
+    <p>Choose a text or image framework, answer guided questions, and generate a copy-ready prompt for ChatGPT, Claude, Gemini, Ideogram, or another AI tool.</p>
+    <div class="hero-actions"><a class="btn ghost" href="#builder">Start building</a><button class="btn ghost" data-jump="instructions">How it works</button></div>
+  </header>
+
+  <nav class="tabs" aria-label="Application tabs">
+    <button class="tab active" data-tab="builder">Builder</button>
+    <button class="tab" data-tab="examples">Examples</button>
+    <button class="tab" data-tab="instructions">Instructions</button>
+  </nav>
+
+  <main id="builder">
+    <section class="panel active" id="panel-builder">
+      <div class="grid">
+        <form class="card" id="promptForm">
+          <div class="head"><h2>Prompt ingredients</h2><p>Pick a framework, then fill in only what you need.</p></div>
+          <div class="body">
+            <div class="field"><span class="label">Choose a framework</span>
+              <div class="frameworks">
+                <label class="framework"><input type="radio" name="framework" value="rtcf" checked><span><strong>R-T-C-F: Basic Text Prompt</strong><span>Role, Task, Context, Format. Best for everyday AI work.</span></span></label>
+                <label class="framework"><input type="radio" name="framework" value="costar"><span><strong>CO-STAR+: Advanced Text Prompt</strong><span>Context, Objective, Style, Tone, Audience, Response. Best for polished output.</span></span></label>
+                <label class="framework"><input type="radio" name="framework" value="sss"><span><strong>S-S-S + Size: Basic Image Prompt</strong><span>Subject, Setting, Style, Size. Fast prompts for image tools.</span></span></label>
+                <label class="framework"><input type="radio" name="framework" value="ssclcm"><span><strong>SSCL-CM: Advanced Image Prompt</strong><span>Subject, Setting, Camera, Lighting, Color/Style, Mood/Modifiers.</span></span></label>
+              </div>
+            </div>
+
+            <div class="two">
+              <div class="field"><label for="tool">AI tool</label><select id="tool"><option value="general">General AI tool</option><option value="chatgpt">ChatGPT</option><option value="claude">Claude</option><option value="gemini">Gemini</option><option value="ideogram">Ideogram</option></select></div>
+              <div class="field"><label for="outputMode">Output type</label><select id="outputMode"><option value="text">Text output</option><option value="image">Image prompt output</option></select></div>
+            </div>
+
+            <div id="textFields" class="section"><h3>Text prompt details</h3>
+              <div class="field" data-fw="rtcf costar"><label for="role">Role or persona</label><input id="role" type="text" placeholder="Act as an instructional designer and accessibility specialist"></div>
+              <div class="field" data-fw="rtcf"><label for="task">Task</label><textarea id="task" placeholder="What exactly should the AI do?"></textarea></div>
+              <div class="field" data-fw="rtcf costar"><label for="context">Context</label><textarea id="context" placeholder="Audience, situation, background, goals, source material, etc."></textarea></div>
+              <div class="field" data-fw="costar"><label for="objective">Objective</label><textarea id="objective" placeholder="What is the goal of the output?"></textarea></div>
+              <div class="two" data-fw="costar"><div class="field"><label for="style">Style</label><input id="style" type="text" placeholder="clear, practical, plain-language"></div><div class="field"><label for="tone">Tone</label><input id="tone" type="text" placeholder="warm, confident, direct"></div></div>
+              <div class="field" data-fw="costar"><label for="audience">Audience</label><input id="audience" type="text" placeholder="College faculty new to AI"></div>
+              <div class="field" data-fw="rtcf costar"><label for="format">Response format</label><textarea id="format" placeholder="Use headings, bullets, a table, word count, etc."></textarea></div>
+              <div class="field" data-fw="costar"><label for="constraints">Constraints, examples, or things to avoid</label><textarea id="constraints" placeholder="Avoid jargon. Include 3 examples. Keep it human."></textarea></div>
+            </div>
+
+            <div id="imageFields" class="section hidden"><h3>Image prompt details</h3>
+              <div class="field" data-fw="sss ssclcm"><label for="subject">Subject</label><textarea id="subject" placeholder="Main visual focus. Be specific."></textarea></div>
+              <div class="field" data-fw="sss ssclcm"><label for="setting">Setting or context</label><textarea id="setting" placeholder="Where is it? What is happening?"></textarea></div>
+              <div class="field" data-fw="sss"><label for="imageStyleBasic">Style</label><input id="imageStyleBasic" type="text" placeholder="clean flat vector illustration"></div>
+              <div class="two" data-fw="ssclcm"><div class="field"><label for="camera">Composition or camera</label><input id="camera" type="text" placeholder="wide shot, eye level, rule of thirds"></div><div class="field"><label for="lighting">Lighting</label><input id="lighting" type="text" placeholder="soft natural window light"></div></div>
+              <div class="two" data-fw="ssclcm"><div class="field"><label for="colorStyle">Color and style</label><input id="colorStyle" type="text" placeholder="blue and orange palette, editorial style"></div><div class="field"><label for="mood">Mood and modifiers</label><input id="mood" type="text" placeholder="optimistic, polished, no clutter"></div></div>
+              <div class="two"><div class="field"><label for="aspectRatio">Aspect ratio</label><select id="aspectRatio"><option>16:9 landscape</option><option>1:1 square</option><option>4:5 portrait</option><option>2:3 portrait</option><option>9:16 vertical</option><option>3:2 landscape</option></select></div><div class="field"><label for="textInImage">Text to render in image</label><input id="textInImage" type="text" placeholder='"Prompt Better"'></div></div>
+              <div class="field"><label for="avoid">Avoid or exclude</label><textarea id="avoid" placeholder="no blurry text, no extra fingers, no watermark"></textarea><p class="hint">For Ideogram, this can be pasted into the negative prompt field.</p></div>
+            </div>
+
+            <div class="section"><h3>Optional finishing touches</h3>
+              <div class="field"><label for="sourceContent">Source content to include</label><textarea id="sourceContent" placeholder="Paste draft text, notes, data, or image-editing instructions here."></textarea></div>
+              <div class="two"><div class="field"><label for="length">Desired length</label><input id="length" type="text" placeholder="250 words, 6 bullets, one page"></div><div class="field"><label for="iteration">Iteration request</label><input id="iteration" type="text" placeholder="Ask me 3 questions first if unclear."></div></div>
+            </div>
+          </div>
+        </form>
+
+        <aside class="card">
+          <div class="head"><h2>Your generated prompt</h2><p>Copy this into your AI tool, then refine one thing at a time.</p></div>
+          <div class="body">
+            <div class="actions" style="justify-content:space-between;margin-bottom:12px"><span id="status">Ready.</span><span class="row"><button type="button" class="secondary small" id="copyBtn">Copy prompt</button><button type="button" class="secondary small" id="downloadBtn">Download prompt</button><button type="button" class="small" id="resetBtn">Reset</button></span></div>
+            <textarea id="promptOutput" class="output" readonly></textarea>
+            <div class="pills" id="pills"></div>
+            <div class="checks" id="checks"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-examples">
+      <div class="cards4"><div class="mini"><h3>R-T-C-F</h3><p>Fast text prompts for daily writing, summarizing, revising, and brainstorming.</p></div><div class="mini"><h3>CO-STAR+</h3><p>More control over audience, tone, style, structure, and constraints.</p></div><div class="mini"><h3>S-S-S + Size</h3><p>Simple image prompts that name subject, setting, style, and aspect ratio.</p></div><div class="mini"><h3>SSCL-CM</h3><p>Advanced image prompts with camera, lighting, color, mood, and modifiers.</p></div></div>
+      <div class="examples" style="margin-top:18px">
+        <article class="example"><div class="body"><h3>R-T-C-F example</h3><pre>Role: Act as a friendly instructional designer.
+
+Task: Rewrite this announcement so it is clearer for online students.
+
+Context: Students are in Week 1 and may be new to Brightspace.
+
+Format: Use a short heading, two brief paragraphs, and a 3-item checklist.</pre></div></article>
+        <article class="example"><div class="body"><h3>CO-STAR+ example</h3><pre>Context: Our college is launching a faculty workshop on AI literacy.
+
+Objective: Write a promotional email that encourages faculty to register.
+
+Style: Clear, practical, and human.
+
+Tone: Encouraging and not salesy.
+
+Audience: Faculty who are curious about AI.
+
+Response: Subject line, 180-word email, and 3 bullets. Avoid jargon.</pre></div></article>
+        <article class="example"><div class="body"><h3>S-S-S example</h3><pre>A cozy independent coffee shop interior with a steaming latte on a wooden table, early morning light through large windows, warm photorealistic photo, 16:9 landscape.</pre></div></article>
+        <article class="example"><div class="body"><h3>SSCL-CM example</h3><pre>A community college instructor helping students use laptops, modern classroom, wide shot at eye level, soft natural window light, bright blue and orange accents, clean editorial illustration style, optimistic professional mood, 16:9 landscape, avoid clutter and distorted hands.</pre></div></article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-instructions">
+      <div class="instructions">
+        <article class="box"><h2>How to use it</h2><ol><li>Choose the framework that matches your task.</li><li>Select the AI tool and output type.</li><li>Answer the guided questions.</li><li>Review the generated prompt and quality checks.</li><li>Click Copy prompt and paste it into your AI tool.</li><li>Iterate by changing one thing at a time.</li></ol><div class="callout"><strong>Best habit:</strong> Your first prompt is a draft. Improve it through follow-up requests.</div></article>
+        <article class="box"><h2>Which framework?</h2><ul><li><strong>R-T-C-F:</strong> Everyday text tasks.</li><li><strong>CO-STAR+:</strong> Polished public-facing text.</li><li><strong>S-S-S + Size:</strong> Quick image prompts.</li><li><strong>SSCL-CM:</strong> Detailed, higher-quality visuals.</li></ul><div class="callout"><strong>Image tip:</strong> Describe what the camera would see and put the most important detail first.</div></article>
+        <article class="box"><h2>Platform tips</h2><ul><li><strong>ChatGPT:</strong> Great for natural back-and-forth refinement.</li><li><strong>Claude:</strong> Likes clearly labeled sections.</li><li><strong>Gemini:</strong> Good for concise prompts and Google Workspace contexts.</li><li><strong>Ideogram:</strong> Strong for image text and typography.</li></ul></article>
+        <article class="box"><h2>Before publishing</h2><ul><li>Verify factual claims.</li><li>Revise the voice so it sounds human.</li><li>Check audience, tone, and purpose.</li><li>For images, inspect text, hands, faces, and logos.</li></ul></article>
+      </div>
+    </section>
+  </main>
+  <p class="footer">Built for structured prompting, useful iteration, and fewer cursed blank-box moments.</p>
+</div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const fields=['role','task','context','objective','style','tone','audience','format','constraints','subject','setting','imageStyleBasic','camera','lighting','colorStyle','mood','aspectRatio','textInImage','avoid','sourceContent','length','iteration'].reduce((o,id)=>(o[id]=$('#'+id),o),{});
+const out=$('#promptOutput'),status=$('#status'),pills=$('#pills'),checks=$('#checks'),tool=$('#tool'),mode=$('#outputMode');
+const samples={rtcf:{role:'Act as an instructional designer and accessibility specialist',task:'Create a clear prompt that helps faculty revise an online course announcement',context:'The audience is college faculty who use Brightspace. The announcement should be easy for students to scan and should use plain language.',format:'Return a polished announcement with a short heading, two brief paragraphs, and a 3-item student checklist.',length:'Under 220 words',iteration:'If anything is unclear, ask up to 3 clarifying questions before drafting.'},costar:{role:'Act as a senior instructional designer',context:'Our college is creating a short faculty training resource about better AI prompting.',objective:'Write a practical one-page handout that helps faculty write better prompts for teaching and course design tasks.',style:'Plain-language, organized, practical',tone:'Supportive, confident, and direct',audience:'College faculty who are curious about AI but do not want technical jargon',format:'Use a title, short intro, 4-step process, and 3 example prompts.',constraints:'Avoid hype. Avoid scare tactics. Include a reminder to verify factual claims.',length:'One page'},sss:{subject:'A community college instructor helping a small group of students use laptops',setting:'A bright modern classroom with collaborative tables and subtle campus colors',imageStyleBasic:'Clean flat vector illustration with friendly shapes and readable visual hierarchy',aspectRatio:'16:9 landscape',textInImage:'"Prompt Better"',avoid:'No distorted hands, no cluttered background, no tiny unreadable text'},ssclcm:{subject:'A confident faculty member presenting an AI prompt-building workshop to adult learners',setting:'A modern training room with laptops, sticky notes, and a large display screen',camera:'Medium-wide shot, eye level, rule of thirds, subject slightly left of center',lighting:'Soft natural window light with gentle fill light',colorStyle:'Bright blue, teal, and orange accents, clean editorial illustration style',mood:'Curious, professional, energetic, polished',aspectRatio:'16:9 landscape',textInImage:'"Prompt Builder"',avoid:'No fake logos, no blurry text, no extra fingers, no watermark'}};
+function v(id){return String(fields[id]?.value||'').trim()}function fw(){return document.querySelector('input[name="framework"]:checked')?.value||'rtcf'}function esc(x){return String(x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function tname(){return {general:'General AI tool',chatgpt:'ChatGPT',claude:'Claude',gemini:'Gemini',ideogram:'Ideogram'}[tool.value]||'General AI tool'}function fname(f){return {rtcf:'R-T-C-F',costar:'CO-STAR+',sss:'S-S-S + Size',ssclcm:'SSCL-CM'}[f]||'R-T-C-F'}
+function prefix(f){let img=f==='sss'||f==='ssclcm';if(tool.value==='claude'&&!img)return 'Use the labeled sections below to complete the request.\n\n';if(tool.value==='gemini')return img?'Create an image using the following prompt. Follow the visual details closely.\n\n':'Complete the following request directly and concisely.\n\n';if(tool.value==='chatgpt')return img?'Generate an image using this prompt. Preserve the key subject, style, lighting, and aspect ratio.\n\n':'Complete the following request. Use the context, format, and constraints where possible.\n\n';if(tool.value==='ideogram')return 'Image prompt for Ideogram. Render quoted text accurately and keep text short and readable.\n\n';return ''}
+function buildRTCF(){let p=[];if(v('role'))p.push('Role: '+v('role')+'.');if(v('task'))p.push('Task: '+v('task'));if(v('context'))p.push('Context: '+v('context'));if(v('format'))p.push('Format: '+v('format'));if(v('length'))p.push('Length: '+v('length'));if(v('constraints'))p.push('Constraints: '+v('constraints'));if(v('sourceContent'))p.push('Source content:\n'+v('sourceContent'));if(v('iteration'))p.push('Before answering: '+v('iteration'));return prefix('rtcf')+(p.join('\n\n')||'Role:\n\nTask:\n\nContext:\n\nFormat:')}
+function buildCostar(){if(tool.value==='claude'){let s=[];['role','context','objective','style','tone','audience'].forEach(id=>{if(v(id))s.push('<'+id+'>'+v(id)+'</'+id+'>')});if(v('format'))s.push('<response_format>'+v('format')+'</response_format>');if(v('length'))s.push('<length>'+v('length')+'</length>');if(v('constraints'))s.push('<constraints>'+v('constraints')+'</constraints>');if(v('sourceContent'))s.push('<source_content>\n'+v('sourceContent')+'\n</source_content>');if(v('iteration'))s.push('<instruction>'+v('iteration')+'</instruction>');return prefix('costar')+(s.join('\n\n')||'<context></context>\n\n<objective></objective>\n\n<response_format></response_format>')}let p=[];if(v('role'))p.push('Role: '+v('role')+'.');if(v('context'))p.push('Context: '+v('context'));if(v('objective'))p.push('Objective: '+v('objective'));if(v('style'))p.push('Style: '+v('style'));if(v('tone'))p.push('Tone: '+v('tone'));if(v('audience'))p.push('Audience: '+v('audience'));if(v('format'))p.push('Response format: '+v('format'));if(v('length'))p.push('Length: '+v('length'));if(v('constraints'))p.push('Constraints and examples: '+v('constraints'));if(v('sourceContent'))p.push('Source content:\n'+v('sourceContent'));if(v('iteration'))p.push('Before answering: '+v('iteration'));return prefix('costar')+(p.join('\n\n')||'Context:\n\nObjective:\n\nStyle:\n\nTone:\n\nAudience:\n\nResponse format:')}
+function buildSSS(){let p=[];if(v('subject'))p.push(v('subject'));if(v('setting'))p.push(v('setting'));if(v('imageStyleBasic'))p.push(v('imageStyleBasic'));if(v('textInImage'))p.push('Include the text '+v('textInImage')+' with clean, readable typography.');if(v('aspectRatio'))p.push(v('aspectRatio'));if(v('avoid'))p.push((tool.value==='ideogram'?'Negative prompt: ':'Avoid: ')+v('avoid'));if(v('sourceContent'))p.push('Additional reference or editing instructions: '+v('sourceContent'));return prefix('sss')+(p.join(', ')||'Subject, setting, style, size.')}
+function buildSSCLCM(){let p=[];if(v('subject'))p.push('Subject: '+v('subject'));if(v('setting'))p.push('Setting/context: '+v('setting'));if(v('camera'))p.push('Composition/camera: '+v('camera'));if(v('lighting'))p.push('Lighting: '+v('lighting'));if(v('colorStyle'))p.push('Color/style: '+v('colorStyle'));if(v('mood'))p.push('Mood/modifiers: '+v('mood'));if(v('textInImage'))p.push('Text to render: '+v('textInImage')+'. Keep it accurate and readable.');if(v('aspectRatio'))p.push('Aspect ratio: '+v('aspectRatio'));if(v('avoid'))p.push((tool.value==='ideogram'?'Negative prompt: ':'Avoid: ')+v('avoid'));if(v('sourceContent'))p.push('Additional reference or editing instructions: '+v('sourceContent'));return prefix('ssclcm')+(p.join('\n\n')||'Subject:\n\nSetting/context:\n\nComposition/camera:\n\nLighting:\n\nColor/style:\n\nMood/modifiers:')}
+function updateVisibility(){let f=fw(),img=f==='sss'||f==='ssclcm';$('#textFields').classList.toggle('hidden',img);$('#imageFields').classList.toggle('hidden',!img);mode.value=img?'image':'text';if(img&&tool.value==='claude')tool.value='general';$$('[data-fw]').forEach(n=>n.classList.toggle('hidden',!n.dataset.fw.split(' ').includes(f)));generate()}
+function generate(){let f=fw(),prompt=f==='rtcf'?buildRTCF():f==='costar'?buildCostar():f==='sss'?buildSSS():buildSSCLCM();out.value=prompt;status.textContent=fname(f)+' prompt for '+tname()+'.';renderPills(f);renderChecks(f,prompt)}
+function renderPills(f){let img=f==='sss'||f==='ssclcm',arr=[fname(f),tname(),img?'Image prompt':'Text prompt'];if(!img&&v('format'))arr.push('Format included');if(!img&&v('context'))arr.push('Context included');if(img&&v('lighting'))arr.push('Lighting included');if(img&&v('aspectRatio'))arr.push('Aspect ratio included');pills.innerHTML=arr.map(x=>'<span class="pill">'+esc(x)+'</span>').join('')}
+function renderChecks(f,prompt){let img=f==='sss'||f==='ssclcm';let list=img?[['Specific subject','Name the main visual focus clearly.',!!v('subject')],['Setting included','A setting gives the image context.',!!v('setting')],['Visual style','Style helps avoid generic output.',!!(v('imageStyleBasic')||v('colorStyle'))],['Aspect ratio','Set size before generating.',!!v('aspectRatio')]]:[['Role included','A role gives the AI a useful lens.',!!v('role')],['Task/objective included','The prompt needs a clear action.',!!(v('task')||v('objective'))],['Context included','Context reduces guesswork.',!!v('context')],['Format included','Format shapes the answer.',!!v('format')]];list.push(['Enough detail','A usable prompt usually needs some detail.',prompt.length>=90]);checks.innerHTML=list.map(i=>'<div class="check"><div><strong>'+esc(i[0])+'</strong><span>'+esc(i[1])+'</span></div><span class="badge '+(i[2]?'good':'warn')+'">'+(i[2]?'Good':'Review')+'</span></div>').join('')}
+function loadSample(){let f=fw(),s=samples[f]||{};Object.keys(fields).forEach(k=>{if(k==='aspectRatio')fields[k].value=s[k]||'16:9 landscape';else fields[k].value=s[k]||''});generate()}
+async function copyOut(){try{await navigator.clipboard.writeText(out.value);status.textContent='Prompt copied.'}catch(e){out.select();document.execCommand('copy');status.textContent='Prompt selected. Use Ctrl+C or Cmd+C if needed.'}}
+function downloadOut(){let blob=new Blob([out.value],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='generated-ai-prompt.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent='Prompt downloaded.'}
+function switchTab(name){$$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));$$('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name))}
+document.addEventListener('DOMContentLoaded',()=>{$$('input[name="framework"]').forEach(r=>r.addEventListener('change',()=>{updateVisibility();loadSample()}));$$('input,textarea,select').forEach(x=>{x.addEventListener('input',generate);x.addEventListener('change',generate)});$('#copyBtn').addEventListener('click',copyOut);$('#downloadBtn').addEventListener('click',downloadOut);$('#resetBtn').addEventListener('click',loadSample);$$('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));$$('[data-jump]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.jump)));updateVisibility();loadSample()});
+</script>
+</body>
+</html>
