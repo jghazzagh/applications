@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>HTML Project Directory</title>
+
+    <style>
+        :root {
+            --primary: #17365d;
+            --primary-light: #eaf1f8;
+            --accent: #2f6fa5;
+            --text: #243142;
+            --muted: #5f6b78;
+            --background: #f4f7fa;
+            --surface: #ffffff;
+            --border: #d9e1e8;
+            --focus: #ffbf47;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Lato, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 3.5rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 0.75rem;
+            font-size: clamp(2rem, 5vw, 3.25rem);
+            line-height: 1.15;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            opacity: 0.92;
+        }
+
+        main {
+            width: min(1100px, calc(100% - 2rem));
+            margin: -1.5rem auto 3rem;
+        }
+
+        .directory-panel {
+            padding: clamp(1.25rem, 4vw, 2rem);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(20, 40, 60, 0.1);
+        }
+
+        .directory-heading {
+            margin: 0 0 0.25rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .directory-description {
+            margin: 0 0 1.5rem;
+            color: var(--muted);
+        }
+
+        #page-list {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .page-card {
+            height: 100%;
+        }
+
+        .page-link {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 130px;
+            padding: 1.25rem;
+            color: var(--text);
+            background: var(--primary-light);
+            border: 1px solid transparent;
+            border-radius: 12px;
+            text-decoration: none;
+            transition:
+                transform 160ms ease,
+                box-shadow 160ms ease,
+                border-color 160ms ease;
+        }
+
+        .page-link:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(20, 40, 60, 0.12);
+        }
+
+        .page-link:focus-visible {
+            outline: 4px solid var(--focus);
+            outline-offset: 3px;
+        }
+
+        .page-name {
+            margin-bottom: 0.35rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .file-name {
+            margin-top: auto;
+            color: var(--muted);
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.8rem;
+            overflow-wrap: anywhere;
+        }
+
+        .status-message {
+            padding: 1rem;
+            background: var(--primary-light);
+            border-left: 5px solid var(--accent);
+            border-radius: 6px;
+        }
+
+        .error-message {
+            background: #fff3f3;
+            border-left-color: #b42318;
+        }
+
+        footer {
+            padding: 1rem;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>HTML Project Directory</h1>
+
+        <p>
+            Select a project below. This directory updates automatically
+            when HTML files are added to the repository.
+        </p>
+    </header>
+
+    <main>
+        <section
+            class="directory-panel"
+            aria-labelledby="directory-heading"
+        >
+            <h2
+                class="directory-heading"
+                id="directory-heading"
+            >
+                Available Pages
+            </h2>
+
+            <p class="directory-description">
+                The pages below were found in this GitHub repository.
+            </p>
+
+            <div
+                id="status-message"
+                class="status-message"
+                role="status"
+                aria-live="polite"
+            >
+                Loading pages...
+            </div>
+
+            <ul id="page-list" hidden></ul>
+        </section>
+    </main>
+
+    <footer>
+        Hosted with GitHub Pages
+    </footer>
+
+    <script>
+        /*
+         * CHANGE THESE TWO VALUES
+         */
+        const githubUsername = "jghazzagh";
+        const repositoryName = "applications";
+
+        /*
+         * Usually you will not need to change anything below this line.
+         */
+
+        const branchName = "main";
+        const directoryPath = "";
+
+        const pageList = document.getElementById("page-list");
+        const statusMessage =
+            document.getElementById("status-message");
+
+        function createReadableTitle(fileName) {
+            return fileName
+                .replace(/\.html$/i, "")
+                .replace(/[-_]+/g, " ")
+                .replace(/\b\w/g, function (letter) {
+                    return letter.toUpperCase();
+                });
+        }
+
+        function getPageAddress(fileName) {
+            /*
+             * Because index.html and the other pages are in the
+             * same directory, a relative link is all we need.
+             */
+            return encodeURI(fileName);
+        }
+
+        function showError(message) {
+            statusMessage.textContent = message;
+            statusMessage.classList.add("error-message");
+            statusMessage.hidden = false;
+            pageList.hidden = true;
+        }
+
+        async function loadHtmlPages() {
+            let apiAddress =
+                "https://api.github.com/repos/" +
+                encodeURIComponent(githubUsername) +
+                "/" +
+                encodeURIComponent(repositoryName) +
+                "/contents/";
+
+            if (directoryPath) {
+                apiAddress += encodeURIComponent(directoryPath);
+            }
+
+            apiAddress +=
+                "?ref=" + encodeURIComponent(branchName);
+
+            try {
+                const response = await fetch(apiAddress, {
+                    headers: {
+                        "Accept": "application/vnd.github+json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        "GitHub returned status " + response.status
+                    );
+                }
+
+                const files = await response.json();
+
+                const htmlFiles = files
+                    .filter(function (item) {
+                        return (
+                            item.type === "file" &&
+                            item.name.toLowerCase().endsWith(".html") &&
+                            item.name.toLowerCase() !== "index.html"
+                        );
+                    })
+                    .sort(function (firstFile, secondFile) {
+                        return firstFile.name.localeCompare(
+                            secondFile.name
+                        );
+                    });
+
+                if (htmlFiles.length === 0) {
+                    statusMessage.textContent =
+                        "No additional HTML files were found.";
+                    return;
+                }
+
+                htmlFiles.forEach(function (file) {
+                    const listItem =
+                        document.createElement("li");
+
+                    listItem.className = "page-card";
+
+                    const link =
+                        document.createElement("a");
+
+                    link.className = "page-link";
+                    link.href = getPageAddress(file.name);
+
+                    const readableName =
+                        document.createElement("span");
+
+                    readableName.className = "page-name";
+                    readableName.textContent =
+                        createReadableTitle(file.name);
+
+                    const originalFileName =
+                        document.createElement("span");
+
+                    originalFileName.className = "file-name";
+                    originalFileName.textContent = file.name;
+
+                    link.appendChild(readableName);
+                    link.appendChild(originalFileName);
+                    listItem.appendChild(link);
+                    pageList.appendChild(listItem);
+                });
+
+                statusMessage.hidden = true;
+                pageList.hidden = false;
+            } catch (error) {
+                console.error(error);
+
+                showError(
+                    "The page directory could not be loaded. " +
+                    "Check the GitHub username, repository name, " +
+                    "branch name, and repository visibility."
+                );
+            }
+        }
+
+        loadHtmlPages();
+    </script>
+</body>
+</html>
