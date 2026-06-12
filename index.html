@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,11 @@
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="A directory of web applications and HTML projects."
     >
 
     <title>HTML Project Directory</title>
@@ -21,6 +27,8 @@
             --surface: #ffffff;
             --border: #d9e1e8;
             --focus: #ffbf47;
+            --error-background: #fff3f3;
+            --error-border: #b42318;
         }
 
         * {
@@ -97,7 +105,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            min-height: 130px;
+            min-height: 180px;
             padding: 1.25rem;
             color: var(--text);
             background: var(--primary-light);
@@ -122,20 +130,24 @@
         }
 
         .page-name {
-            margin-bottom: 0.35rem;
+            display: block;
+            margin-bottom: 0.5rem;
             color: var(--primary);
             font-size: 1.1rem;
             font-weight: 700;
+            line-height: 1.3;
         }
+
         .page-description {
-    display: block;
-    margin-bottom: 1rem;
-    color: var(--muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
 
         .file-name {
+            display: block;
             margin-top: auto;
             color: var(--muted);
             font-family: Consolas, Monaco, monospace;
@@ -151,8 +163,8 @@
         }
 
         .error-message {
-            background: #fff3f3;
-            border-left-color: #b42318;
+            background: var(--error-background);
+            border-left-color: var(--error-border);
         }
 
         footer {
@@ -216,234 +228,315 @@
         Hosted with GitHub Pages
     </footer>
 
-  <script>
-    /*
-     * CHANGE THESE VALUES
-     */
-    const githubUsername = "YOUR-GITHUB-USERNAME";
-    const repositoryName = "YOUR-REPOSITORY-NAME";
-    const branchName = "main";
-    const directoryPath = "";
+    <script>
+        /*
+         * GITHUB REPOSITORY SETTINGS
+         */
+        const githubUsername = "jghazzagh";
+        const repositoryName = "applications";
+        const branchName = "main";
 
-    const pageList = document.getElementById("page-list");
-    const statusMessage =
-        document.getElementById("status-message");
+        /*
+         * Keep this blank when index.html and the other HTML files
+         * are all located in the main repository directory.
+         */
+        const directoryPath = "";
 
-    function createReadableTitle(fileName) {
-        return fileName
-            .replace(/\.html$/i, "")
-            .replace(/[-_]+/g, " ")
-            .replace(/\b\w/g, function (letter) {
-                return letter.toUpperCase();
-            });
-    }
+        const pageList =
+            document.getElementById("page-list");
 
-    function getPageAddress(fileName) {
-        return encodeURI(fileName);
-    }
+        const statusMessage =
+            document.getElementById("status-message");
 
-    function showError(message) {
-        statusMessage.textContent = message;
-        statusMessage.classList.add("error-message");
-        statusMessage.hidden = false;
-        pageList.hidden = true;
-    }
+        function createReadableTitle(fileName) {
+            return fileName
+                .replace(/\.html$/i, "")
+                .replace(/[-_]+/g, " ")
+                .replace(/\b\w/g, function (letter) {
+                    return letter.toUpperCase();
+                });
+        }
 
-    async function getPageDetails(file) {
-        const pageAddress = getPageAddress(file.name);
+        function getPageAddress(fileName) {
+            return encodeURI(fileName);
+        }
 
-        try {
-            const response = await fetch(pageAddress);
+        function showError(message) {
+            statusMessage.textContent = message;
+            statusMessage.classList.add("error-message");
+            statusMessage.hidden = false;
+            pageList.hidden = true;
+        }
 
-            if (!response.ok) {
-                throw new Error(
-                    "Could not load " + file.name
-                );
-            }
+        async function getPageDetails(file) {
+            const pageAddress =
+                getPageAddress(file.name);
 
-            const htmlText = await response.text();
+            try {
+                const response =
+                    await fetch(pageAddress);
 
-            const parser = new DOMParser();
+                if (!response.ok) {
+                    throw new Error(
+                        "Could not load " +
+                        file.name +
+                        ". GitHub Pages returned status " +
+                        response.status +
+                        "."
+                    );
+                }
 
-            const documentCopy = parser.parseFromString(
-                htmlText,
-                "text/html"
-            );
+                const htmlText =
+                    await response.text();
 
-            const titleElement =
-                documentCopy.querySelector("title");
+                const parser =
+                    new DOMParser();
 
-            const descriptionElement =
-                documentCopy.querySelector(
-                    'meta[name="description"]'
-                );
+                const documentCopy =
+                    parser.parseFromString(
+                        htmlText,
+                        "text/html"
+                    );
 
-            return {
-                fileName: file.name,
-                address: pageAddress,
+                const titleElement =
+                    documentCopy.querySelector("title");
 
-                title:
+                const descriptionElement =
+                    documentCopy.querySelector(
+                        'meta[name="description"]'
+                    );
+
+                const title =
                     titleElement &&
                     titleElement.textContent.trim()
                         ? titleElement.textContent.trim()
-                        : createReadableTitle(file.name),
+                        : createReadableTitle(file.name);
 
-                description:
+                const description =
                     descriptionElement &&
-                    descriptionElement.content.trim()
-                        ? descriptionElement.content.trim()
-                        : "Open this page to view the tool or resource."
-            };
-        } catch (error) {
-            console.error(error);
+                    descriptionElement
+                        .getAttribute("content") &&
+                    descriptionElement
+                        .getAttribute("content")
+                        .trim()
+                        ? descriptionElement
+                            .getAttribute("content")
+                            .trim()
+                        : "Open this page to view the tool or resource.";
 
-            return {
-                fileName: file.name,
-                address: pageAddress,
-                title: createReadableTitle(file.name),
-                description:
-                    "Open this page to view the tool or resource."
-            };
-        }
-    }
-
-    function createPageCard(page) {
-        const listItem =
-            document.createElement("li");
-
-        listItem.className = "page-card";
-
-        const link =
-            document.createElement("a");
-
-        link.className = "page-link";
-        link.href = page.address;
-
-        const pageName =
-            document.createElement("span");
-
-        pageName.className = "page-name";
-        pageName.textContent = page.title;
-
-        const pageDescription =
-            document.createElement("span");
-
-        pageDescription.className =
-            "page-description";
-
-        pageDescription.textContent =
-            page.description;
-
-        const fileName =
-            document.createElement("span");
-
-        fileName.className = "file-name";
-        fileName.textContent = page.fileName;
-
-        link.appendChild(pageName);
-        link.appendChild(pageDescription);
-        link.appendChild(fileName);
-
-        listItem.appendChild(link);
-        pageList.appendChild(listItem);
-    }
-
-    async function loadHtmlPages() {
-        let apiAddress =
-            "https://api.github.com/repos/" +
-            encodeURIComponent(githubUsername) +
-            "/" +
-            encodeURIComponent(repositoryName) +
-            "/contents/";
-
-        if (directoryPath) {
-            apiAddress += encodeURIComponent(
-                directoryPath
-            );
-        }
-
-        apiAddress +=
-            "?ref=" + encodeURIComponent(branchName);
-
-        try {
-            const response = await fetch(
-                apiAddress,
-                {
-                    headers: {
-                        Accept:
-                            "application/vnd.github+json"
-                    }
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    "GitHub returned status " +
-                    response.status
+                return {
+                    fileName: file.name,
+                    address: pageAddress,
+                    title: title,
+                    description: description
+                };
+            } catch (error) {
+                console.error(
+                    "Could not read page details:",
+                    file.name,
+                    error
                 );
+
+                return {
+                    fileName: file.name,
+                    address: pageAddress,
+                    title:
+                        createReadableTitle(file.name),
+                    description:
+                        "Open this page to view the tool or resource."
+                };
+            }
+        }
+
+        function createPageCard(page) {
+            const listItem =
+                document.createElement("li");
+
+            listItem.className = "page-card";
+
+            const link =
+                document.createElement("a");
+
+            link.className = "page-link";
+            link.href = page.address;
+
+            const pageName =
+                document.createElement("span");
+
+            pageName.className = "page-name";
+            pageName.textContent = page.title;
+
+            const pageDescription =
+                document.createElement("span");
+
+            pageDescription.className =
+                "page-description";
+
+            pageDescription.textContent =
+                page.description;
+
+            const fileName =
+                document.createElement("span");
+
+            fileName.className = "file-name";
+            fileName.textContent = page.fileName;
+
+            link.appendChild(pageName);
+            link.appendChild(pageDescription);
+            link.appendChild(fileName);
+
+            listItem.appendChild(link);
+            pageList.appendChild(listItem);
+        }
+
+        function buildApiAddress() {
+            let apiAddress =
+                "https://api.github.com/repos/" +
+                encodeURIComponent(githubUsername) +
+                "/" +
+                encodeURIComponent(repositoryName) +
+                "/contents";
+
+            if (directoryPath) {
+                apiAddress +=
+                    "/" +
+                    directoryPath
+                        .split("/")
+                        .map(function (folderName) {
+                            return encodeURIComponent(
+                                folderName
+                            );
+                        })
+                        .join("/");
             }
 
-            const files = await response.json();
+            apiAddress +=
+                "?ref=" +
+                encodeURIComponent(branchName);
 
-            const htmlFiles = files
-                .filter(function (item) {
-                    return (
-                        item.type === "file" &&
-                        item.name
-                            .toLowerCase()
-                            .endsWith(".html") &&
-                        item.name.toLowerCase() !==
-                            "index.html"
+            return apiAddress;
+        }
+
+        async function loadHtmlPages() {
+            const apiAddress =
+                buildApiAddress();
+
+            console.log(
+                "Loading repository directory:",
+                apiAddress
+            );
+
+            try {
+                const response =
+                    await fetch(apiAddress, {
+                        headers: {
+                            Accept:
+                                "application/vnd.github+json"
+                        }
+                    });
+
+                if (!response.ok) {
+                    let errorMessage =
+                        "GitHub returned status " +
+                        response.status +
+                        ".";
+
+                    if (response.status === 404) {
+                        errorMessage +=
+                            " The repository, branch, or directory " +
+                            "could not be found.";
+                    }
+
+                    if (response.status === 403) {
+                        errorMessage +=
+                            " GitHub may have temporarily limited " +
+                            "public API requests.";
+                    }
+
+                    throw new Error(errorMessage);
+                }
+
+                const files =
+                    await response.json();
+
+                if (!Array.isArray(files)) {
+                    throw new Error(
+                        "The selected GitHub location " +
+                        "is not a directory."
                     );
-                })
-                .sort(function (
-                    firstFile,
-                    secondFile
+                }
+
+                const htmlFiles = files
+                    .filter(function (item) {
+                        return (
+                            item.type === "file" &&
+                            item.name
+                                .toLowerCase()
+                                .endsWith(".html") &&
+                            item.name.toLowerCase() !==
+                                "index.html"
+                        );
+                    })
+                    .sort(function (
+                        firstFile,
+                        secondFile
+                    ) {
+                        return firstFile.name.localeCompare(
+                            secondFile.name
+                        );
+                    });
+
+                if (htmlFiles.length === 0) {
+                    statusMessage.textContent =
+                        "No additional HTML files were found " +
+                        "in this directory.";
+
+                    return;
+                }
+
+                statusMessage.textContent =
+                    "Loading page titles and descriptions...";
+
+                const pages =
+                    await Promise.all(
+                        htmlFiles.map(getPageDetails)
+                    );
+
+                pages.sort(function (
+                    firstPage,
+                    secondPage
                 ) {
-                    return firstFile.name.localeCompare(
-                        secondFile.name
+                    return firstPage.title.localeCompare(
+                        secondPage.title
                     );
                 });
 
-            if (htmlFiles.length === 0) {
-                statusMessage.textContent =
-                    "No additional HTML files were found.";
+                pageList.innerHTML = "";
 
-                return;
-            }
+                pages.forEach(createPageCard);
 
-            statusMessage.textContent =
-                "Loading page descriptions...";
-
-            const pages = await Promise.all(
-                htmlFiles.map(getPageDetails)
-            );
-
-            pages.sort(function (
-                firstPage,
-                secondPage
-            ) {
-                return firstPage.title.localeCompare(
-                    secondPage.title
+                statusMessage.hidden = true;
+                pageList.hidden = false;
+            } catch (error) {
+                console.error(
+                    "Page-directory error:",
+                    error
                 );
-            });
 
-            pages.forEach(createPageCard);
-
-            statusMessage.hidden = true;
-            pageList.hidden = false;
-        } catch (error) {
-            console.error(error);
-
-            showError(
-                "The page directory could not be loaded. " +
-                "Check the GitHub username, repository name, " +
-                "branch name, and repository visibility."
-            );
+                showError(
+                    "The page directory could not be loaded. " +
+                    error.message +
+                    " Repository checked: " +
+                    githubUsername +
+                    "/" +
+                    repositoryName +
+                    "."
+                );
+            }
         }
-    }
 
-    loadHtmlPages();
-</script>
+        loadHtmlPages();
+    </script>
 </body>
 </html>
+```
