@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCC Brightspace Widget Builder</title>
+  <style>
+    :root {
+      --mcc-navy: #003366;
+      --mcc-dark: #001b3b;
+      --mcc-orange: #ff6600;
+      --mcc-light-blue: #d6e8ee;
+      --app-bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #627086;
+      --border: #d8e0ea;
+      --shadow: 0 18px 42px rgba(0, 27, 59, 0.12);
+      --radius: 18px;
+      --font: "Lato", "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at top left, rgba(0, 51, 102, 0.15), transparent 32rem),
+        radial-gradient(circle at top right, rgba(255, 102, 0, 0.13), transparent 28rem),
+        linear-gradient(180deg, #ffffff 0%, var(--app-bg) 100%);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--mcc-navy);
+      z-index: 999;
+      border: 2px solid var(--mcc-navy);
+    }
+
+    .skip-link:focus {
+      left: 8px;
+    }
+
+    .app {
+      max-width: 1460px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(0, 51, 102, 0.98), rgba(0, 141, 167, 0.94)),
+        radial-gradient(circle at 84% 22%, rgba(255,255,255,0.22), transparent 18rem);
+      color: #ffffff;
+      border-radius: 28px;
+      padding: clamp(26px, 5vw, 52px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      right: -110px;
+      top: -130px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.32);
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      max-width: 800px;
+      margin: 16px 0 0;
+      color: rgba(255,255,255,0.92);
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      line-height: 1.6;
+    }
+
+    .tabs {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 10px 26px rgba(0, 27, 59, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+      padding: 12px 16px;
+      border-radius: 11px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--mcc-navy);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.22);
+    }
+
+    .panel {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .builder-grid {
+      display: grid;
+      grid-template-columns: minmax(340px, 470px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.96);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(0,51,102,0.07), rgba(255,102,0,0.06));
+    }
+
+    .card-head h2,
+    .card-head h3 {
+      margin: 0;
+      color: var(--mcc-dark);
+    }
+
+    .card-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    details.section {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 14px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    details.section summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+      font-weight: 900;
+      color: var(--mcc-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    details.section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.section summary::after {
+      content: "+";
+      color: var(--mcc-orange);
+      font-size: 1.25rem;
+    }
+
+    details.section[open] summary::after {
+      content: "−";
+    }
+
+    .section-body {
+      border-top: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label,
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: #26344e;
+      font-size: 0.88rem;
+      font-weight: 900;
+    }
+
+    .help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px 11px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+      outline: 3px solid rgba(0, 86, 179, 0.2);
+      outline-offset: 2px;
+      border-color: var(--mcc-navy);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 9px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 48px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      padding: 2px;
+    }
+
+    .layout-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .layout-option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 12px;
+      cursor: pointer;
+      background: #ffffff;
+    }
+
+    .layout-option:hover,
+    .layout-option:has(input:checked) {
+      border-color: var(--mcc-navy);
+      background: #edf5ff;
+    }
+
+    .layout-option input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--mcc-navy);
+    }
+
+    .layout-title {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .layout-desc {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .preview-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 640px;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      padding: 24px;
+    }
+
+    .widget-stage {
+      width: 360px;
+      max-width: 100%;
+    }
+
+    iframe.preview {
+      width: 360px;
+      max-width: 100%;
+      min-height: 600px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 12px 30px rgba(0,27,59,0.12);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 11px;
+      padding: 10px 13px;
+      font-weight: 900;
+      cursor: pointer;
+      background: var(--mcc-navy);
+      color: #ffffff;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: var(--mcc-dark);
+    }
+
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--mcc-navy);
+      border: 1px solid #b8cbe0;
+    }
+
+    .btn.secondary:hover {
+      background: #edf5ff;
+    }
+
+    .code-output {
+      width: 100%;
+      min-height: 530px;
+      border: 0;
+      border-radius: 0;
+      background: #0f172a;
+      color: #e5edf8;
+      padding: 16px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .instructions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .info-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 28px rgba(0,27,59,0.08);
+    }
+
+    .info-card h2,
+    .info-card h3 {
+      margin-top: 0;
+      color: var(--mcc-navy);
+    }
+
+    .info-card li {
+      margin-bottom: 0.55rem;
+    }
+
+    .callout {
+      border-left: 6px solid var(--mcc-orange);
+      background: #fff4eb;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin: 24px 0 8px;
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 1150px) {
+      .builder-grid,
+      .workspace,
+      .instructions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-wrap {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app {
+        padding: 12px;
+      }
+
+      .hero {
+        border-radius: 20px;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        position: static;
+      }
+
+      .tab {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#builderPanel">Skip to widget builder</a>
+
+  <div class="app">
+    <header class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">MCC Brightspace Widget Builder</div>
+        <h1>Create compact course widgets without wrestling a 360-pixel shoebox.</h1>
+        <p>Choose a widget type, customize its content and visual style, preview it at the approximate Brightspace sidebar width, then copy the complete inline HTML snippet.</p>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Application navigation">
+      <button type="button" class="tab active" data-tab="builder">Widget Builder</button>
+      <button type="button" class="tab" data-tab="instructions">Instructions</button>
+    </nav>
+
+    <main>
+      <section class="panel active" id="panel-builder" aria-label="Widget builder">
+        <div class="builder-grid" id="builderPanel">
+          <aside class="card">
+            <div class="card-head">
+              <h2>Widget settings</h2>
+              <p>Build the widget from top to bottom. Changes appear instantly.</p>
+            </div>
+
+            <div class="card-body">
+              <details class="section" open>
+                <summary>1. Widget type</summary>
+                <div class="section-body">
+                  <div class="layout-grid">
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="instructor" checked />
+                      <span>
+                        <span class="layout-title">Instructor Information</span>
+                        <span class="layout-desc">Photo, office hours, contact information, and a course message.</span>
+                      </span>
+                    </label>
+
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="quickLinks" />
+                      <span>
+                        <span class="layout-title">Quick Links</span>
+                        <span class="layout-desc">Compact buttons for high-use course links and resources.</span>
+                      </span>
+                    </label>
+
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="weeklyFocus" />
+                      <span>
+                        <span class="layout-title">Weekly Focus</span>
+                        <span class="layout-desc">Current week, goals, deadlines, and a highlighted reminder.</span>
+                      </span>
+                    </label>
+
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="courseHelp" />
+                      <span>
+                        <span class="layout-title">Course Help</span>
+                        <span class="layout-desc">Support categories for instructor, technology, tutoring, or advising.</span>
+                      </span>
+                    </label>
+
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="video" />
+                      <span>
+                        <span class="layout-title">Video or Media</span>
+                        <span class="layout-desc">Compact video thumbnail, short description, and media link.</span>
+                      </span>
+                    </label>
+
+                    <label class="layout-option">
+                      <input type="radio" name="widgetType" value="announcement" />
+                      <span>
+                        <span class="layout-title">Announcement or Reminder</span>
+                        <span class="layout-desc">High-visibility notice with date, message, and action button.</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="section" open>
+                <summary>2. Widget content</summary>
+                <div class="section-body">
+                  <div class="field">
+                    <label for="widgetTitle">Widget title</label>
+                    <input id="widgetTitle" type="text" value="Meet Your Instructor" />
+                  </div>
+
+                  <div class="field">
+                    <label for="widgetSubtitle">Subtitle or short label</label>
+                    <input id="widgetSubtitle" type="text" value="I am here to help you succeed." />
+                  </div>
+
+                  <div class="field">
+                    <label for="mainText">Main text</label>
+                    <textarea id="mainText">Welcome to the course. Please reach out when you have questions about the course content, assignments, or expectations.</textarea>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="itemOneTitle">Item 1 title</label>
+                      <input id="itemOneTitle" type="text" value="Email" />
+                    </div>
+                    <div class="field">
+                      <label for="itemOneText">Item 1 text</label>
+                      <input id="itemOneText" type="text" value="instructor@example.edu" />
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="itemTwoTitle">Item 2 title</label>
+                      <input id="itemTwoTitle" type="text" value="Office Hours" />
+                    </div>
+                    <div class="field">
+                      <label for="itemTwoText">Item 2 text</label>
+                      <input id="itemTwoText" type="text" value="Tuesdays, 2:00–4:00 PM" />
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="itemThreeTitle">Item 3 title</label>
+                      <input id="itemThreeTitle" type="text" value="Response Time" />
+                    </div>
+                    <div class="field">
+                      <label for="itemThreeText">Item 3 text</label>
+                      <input id="itemThreeText" type="text" value="Within 1 business day" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="imageUrl">Image URL placeholder</label>
+                    <input id="imageUrl" type="url" value="https://via.placeholder.com/320x180?text=Add+Image" />
+                    <p class="help">Replace this later with an image stored in Brightspace or another approved location.</p>
+                  </div>
+
+                  <div class="field">
+                    <label for="imageAlt">Image alternative text</label>
+                    <input id="imageAlt" type="text" value="Instructor profile image placeholder" />
+                  </div>
+
+                  <div class="field">
+                    <label for="buttonText">Button text</label>
+                    <input id="buttonText" type="text" value="Contact Your Instructor" />
+                  </div>
+
+                  <div class="field">
+                    <label for="buttonUrl">Button URL placeholder</label>
+                    <input id="buttonUrl" type="url" value="#" />
+                  </div>
+
+                  <div class="field">
+                    <label for="secondaryLinkText">Secondary link text</label>
+                    <input id="secondaryLinkText" type="text" value="View course resources" />
+                  </div>
+
+                  <div class="field">
+                    <label for="secondaryLinkUrl">Secondary link URL</label>
+                    <input id="secondaryLinkUrl" type="url" value="#" />
+                  </div>
+                </div>
+              </details>
+
+              <details class="section" open>
+                <summary>3. Design</summary>
+                <div class="section-body">
+                  <div class="field">
+                    <label for="themePreset">Color preset</label>
+                    <select id="themePreset">
+                      <option value="mcc" selected>MCC navy + orange</option>
+                      <option value="teal">MCC teal + navy</option>
+                      <option value="lightBlue">Light blue + navy</option>
+                      <option value="orange">Orange + navy</option>
+                      <option value="slate">Modern slate</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="primaryColorText">Primary color</label>
+                    <div class="color-row">
+                      <input id="primaryColorPicker" type="color" value="#003366" />
+                      <input id="primaryColorText" type="text" value="#003366" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="accentColorText">Accent color</label>
+                    <div class="color-row">
+                      <input id="accentColorPicker" type="color" value="#FF6600" />
+                      <input id="accentColorText" type="text" value="#FF6600" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="backgroundColorText">Widget background</label>
+                    <div class="color-row">
+                      <input id="backgroundColorPicker" type="color" value="#FFFFFF" />
+                      <input id="backgroundColorText" type="text" value="#FFFFFF" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="surfaceColorText">Card/item background</label>
+                    <div class="color-row">
+                      <input id="surfaceColorPicker" type="color" value="#EAF3F7" />
+                      <input id="surfaceColorText" type="text" value="#EAF3F7" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="textColorText">Text color</label>
+                    <div class="color-row">
+                      <input id="textColorPicker" type="color" value="#001B3B" />
+                      <input id="textColorText" type="text" value="#001B3B" />
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="cornerRadius">Rounded corners</label>
+                      <select id="cornerRadius">
+                        <option value="0px">Square</option>
+                        <option value="6px">Slight</option>
+                        <option value="12px" selected>Rounded</option>
+                        <option value="20px">Extra rounded</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="borderStyle">Border style</label>
+                      <select id="borderStyle">
+                        <option value="none">None</option>
+                        <option value="1px solid #d7e0ea" selected>Light border</option>
+                        <option value="2px solid CURRENT_PRIMARY">Primary border</option>
+                        <option value="4px solid CURRENT_ACCENT">Accent border</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="shadowStyle">Shadow</label>
+                      <select id="shadowStyle">
+                        <option value="none">None</option>
+                        <option value="0 6px 18px rgba(0,27,59,0.10)" selected>Soft</option>
+                        <option value="0 12px 28px rgba(0,27,59,0.16)">Medium</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="spacing">Internal spacing</label>
+                      <select id="spacing">
+                        <option value="12px">Compact</option>
+                        <option value="16px" selected>Comfortable</option>
+                        <option value="20px">Roomy</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="fontStack">Font</label>
+                    <select id="fontStack">
+                      <option value='"Lato", Arial, sans-serif' selected>Lato</option>
+                      <option value='Arial, Helvetica, sans-serif'>Arial</option>
+                      <option value='"Trebuchet MS", Arial, sans-serif'>Trebuchet MS</option>
+                      <option value='Verdana, Geneva, sans-serif'>Verdana</option>
+                    </select>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="showImage">Show image</label>
+                      <select id="showImage">
+                        <option value="yes" selected>Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="showButton">Show action button</label>
+                      <select id="showButton">
+                        <option value="yes" selected>Yes</option>
+                        <option value="no">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <div class="btn-row">
+                <button type="button" class="btn secondary" id="resetBtn">Reset</button>
+              </div>
+            </div>
+          </aside>
+
+          <section class="workspace">
+            <div class="card">
+              <div class="card-head">
+                <h2>Live 360px preview</h2>
+                <p>Approximate width of a Brightspace side widget.</p>
+              </div>
+              <div class="preview-wrap">
+                <div class="widget-stage">
+                  <iframe id="previewFrame" class="preview" title="Brightspace widget preview" sandbox="allow-same-origin"></iframe>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>Brightspace widget code</h2>
+                <p>Inline HTML only. Copy the entire snippet into the widget HTML/source editor.</p>
+              </div>
+              <div class="card-body">
+                <div class="btn-row" style="justify-content:space-between; margin-bottom:12px;">
+                  <span class="status" id="copyStatus">Ready to copy.</span>
+                  <button type="button" class="btn" id="copyBtn">Copy all code</button>
+                </div>
+              </div>
+              <textarea id="codeOutput" class="code-output" readonly spellcheck="false"></textarea>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-instructions" aria-label="Instructions">
+        <div class="instructions-grid">
+          <article class="info-card">
+            <h2>How to build a widget</h2>
+            <ol>
+              <li>Choose a widget type.</li>
+              <li>Edit the title, message, items, image placeholder, and links.</li>
+              <li>Choose a preset or customize the colors.</li>
+              <li>Adjust corners, borders, spacing, and shadow.</li>
+              <li>Review the 360px preview.</li>
+              <li>Copy the full code snippet.</li>
+            </ol>
+          </article>
+
+          <article class="info-card">
+            <h2>How to transfer it to Brightspace</h2>
+            <ol>
+              <li>Open the course where the widget will appear.</li>
+              <li>Open the homepage or widget management area.</li>
+              <li>Create or edit a custom HTML widget.</li>
+              <li>Open the HTML/source editor.</li>
+              <li>Paste the full generated code.</li>
+              <li>Save the widget, then add it to the course homepage layout.</li>
+              <li>Preview the course homepage and verify the links, image, spacing, and color contrast.</li>
+            </ol>
+          </article>
+
+          <article class="info-card">
+            <h2>Replacing placeholders</h2>
+            <ul>
+              <li>Replace image URLs with files uploaded to Brightspace or another approved source.</li>
+              <li>Replace <code>#</code> links with actual course links.</li>
+              <li>Use descriptive image alternative text.</li>
+              <li>Keep widget text concise because the available width is narrow.</li>
+            </ul>
+          </article>
+
+          <article class="info-card">
+            <h2>Accessibility reminders</h2>
+            <ul>
+              <li>Use meaningful link and button text.</li>
+              <li>Do not rely on color alone to communicate meaning.</li>
+              <li>Keep body text at a readable size.</li>
+              <li>Use strong color contrast.</li>
+              <li>Keep headings in a logical order.</li>
+            </ul>
+
+            <div class="callout">
+              <strong>Tip:</strong> Widgets work best when they provide one focused function. Tiny dashboards become digital junk drawers very quickly.
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <p class="footer-note">MCC Brightspace Widget Builder</p>
+  </div>
+
+  <script>
+    "use strict";
+
+    const themes = {
+      mcc: {
+        primary: "#003366",
+        accent: "#FF6600",
+        background: "#FFFFFF",
+        surface: "#EAF3F7",
+        text: "#001B3B"
+      },
+      teal: {
+        primary: "#008DA7",
+        accent: "#003366",
+        background: "#FFFFFF",
+        surface: "#E7F6F8",
+        text: "#001B3B"
+      },
+      lightBlue: {
+        primary: "#003366",
+        accent: "#33A1FD",
+        background: "#FFFFFF",
+        surface: "#EAF5FF",
+        text: "#001B3B"
+      },
+      orange: {
+        primary: "#FF6600",
+        accent: "#003366",
+        background: "#FFFFFF",
+        surface: "#FFF1E8",
+        text: "#001B3B"
+      },
+      slate: {
+        primary: "#334155",
+        accent: "#2563EB",
+        background: "#FFFFFF",
+        surface: "#F1F5F9",
+        text: "#111827"
+      }
+    };
+
+    const presets = {
+      instructor: {
+        title: "Meet Your Instructor",
+        subtitle: "I am here to help you succeed.",
+        main: "Welcome to the course. Please reach out when you have questions about the course content, assignments, or expectations.",
+        oneTitle: "Email",
+        oneText: "instructor@example.edu",
+        twoTitle: "Office Hours",
+        twoText: "Tuesdays, 2:00–4:00 PM",
+        threeTitle: "Response Time",
+        threeText: "Within 1 business day",
+        button: "Contact Your Instructor",
+        secondary: "View course resources",
+        imageAlt: "Instructor profile image placeholder"
+      },
+      quickLinks: {
+        title: "Course Quick Links",
+        subtitle: "Jump directly to commonly used course areas.",
+        main: "Use these links to quickly access the places you will visit most often in this course.",
+        oneTitle: "Assignments",
+        oneText: "Open assignment folders and submission areas",
+        twoTitle: "Grades",
+        twoText: "Review grades and instructor feedback",
+        threeTitle: "Course Help",
+        threeText: "Find support and contact information",
+        button: "Open Course Content",
+        secondary: "View all course tools",
+        imageAlt: "Course links image placeholder"
+      },
+      weeklyFocus: {
+        title: "This Week",
+        subtitle: "Stay focused on the most important tasks.",
+        main: "Complete the required content, participate in the weekly activity, and submit your work before the deadline.",
+        oneTitle: "Read",
+        oneText: "Review the weekly overview and assigned materials",
+        twoTitle: "Participate",
+        twoText: "Complete the discussion or learning activity",
+        threeTitle: "Submit",
+        threeText: "Turn in the weekly assignment",
+        button: "Open This Week's Module",
+        secondary: "View the course calendar",
+        imageAlt: "Weekly focus image placeholder"
+      },
+      courseHelp: {
+        title: "Need Help?",
+        subtitle: "Choose the kind of support you need.",
+        main: "Use the options below to find help with coursework, technology, or course expectations.",
+        oneTitle: "Instructor Help",
+        oneText: "Questions about assignments, grades, or course content",
+        twoTitle: "Technology Help",
+        twoText: "Brightspace, email, software, or login problems",
+        threeTitle: "Academic Support",
+        threeText: "Tutoring, research, advising, or testing",
+        button: "Open Student Resources",
+        secondary: "Contact technical support",
+        imageAlt: "Student support image placeholder"
+      },
+      video: {
+        title: "Featured Video",
+        subtitle: "Watch this short video before continuing.",
+        main: "Use this media item to review the key concept, prepare for an activity, or hear an important course update.",
+        oneTitle: "Length",
+        oneText: "Approximately 5 minutes",
+        twoTitle: "Purpose",
+        twoText: "Introduces the main concept",
+        threeTitle: "Next Step",
+        threeText: "Complete the related activity",
+        button: "Watch the Video",
+        secondary: "Open the transcript",
+        imageAlt: "Video thumbnail placeholder"
+      },
+      announcement: {
+        title: "Important Reminder",
+        subtitle: "Please review this update.",
+        main: "Add a short announcement, deadline reminder, course change, or other important message here.",
+        oneTitle: "Date",
+        oneText: "Add the relevant date",
+        twoTitle: "Action",
+        twoText: "Describe what students need to do",
+        threeTitle: "Questions",
+        threeText: "Contact your instructor if clarification is needed",
+        button: "View Full Details",
+        secondary: "Open the course calendar",
+        imageAlt: "Announcement image placeholder"
+      }
+    };
+
+    const dom = {
+      title: document.getElementById("widgetTitle"),
+      subtitle: document.getElementById("widgetSubtitle"),
+      main: document.getElementById("mainText"),
+      oneTitle: document.getElementById("itemOneTitle"),
+      oneText: document.getElementById("itemOneText"),
+      twoTitle: document.getElementById("itemTwoTitle"),
+      twoText: document.getElementById("itemTwoText"),
+      threeTitle: document.getElementById("itemThreeTitle"),
+      threeText: document.getElementById("itemThreeText"),
+      imageUrl: document.getElementById("imageUrl"),
+      imageAlt: document.getElementById("imageAlt"),
+      buttonText: document.getElementById("buttonText"),
+      buttonUrl: document.getElementById("buttonUrl"),
+      secondaryText: document.getElementById("secondaryLinkText"),
+      secondaryUrl: document.getElementById("secondaryLinkUrl"),
+      themePreset: document.getElementById("themePreset"),
+      primaryPicker: document.getElementById("primaryColorPicker"),
+      primaryText: document.getElementById("primaryColorText"),
+      accentPicker: document.getElementById("accentColorPicker"),
+      accentText: document.getElementById("accentColorText"),
+      backgroundPicker: document.getElementById("backgroundColorPicker"),
+      backgroundText: document.getElementById("backgroundColorText"),
+      surfacePicker: document.getElementById("surfaceColorPicker"),
+      surfaceText: document.getElementById("surfaceColorText"),
+      textPicker: document.getElementById("textColorPicker"),
+      textText: document.getElementById("textColorText"),
+      cornerRadius: document.getElementById("cornerRadius"),
+      borderStyle: document.getElementById("borderStyle"),
+      shadowStyle: document.getElementById("shadowStyle"),
+      spacing: document.getElementById("spacing"),
+      fontStack: document.getElementById("fontStack"),
+      showImage: document.getElementById("showImage"),
+      showButton: document.getElementById("showButton"),
+      preview: document.getElementById("previewFrame"),
+      code: document.getElementById("codeOutput"),
+      copyBtn: document.getElementById("copyBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      copyStatus: document.getElementById("copyStatus")
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    function sanitizeUrl(value, fallback = "#") {
+      const raw = String(value ?? "").trim();
+      if (!raw) return fallback;
+      if (raw === "#") return "#";
+      if (/^(https?:\/\/|\/|#|mailto:|tel:)/i.test(raw)) {
+        return escapeAttr(raw);
+      }
+      return fallback;
+    }
+
+    function isHex(value) {
+      return /^#[0-9A-Fa-f]{6}$/.test(String(value || ""));
+    }
+
+    function selectedType() {
+      const selected = document.querySelector('input[name="widgetType"]:checked');
+      return selected ? selected.value : "instructor";
+    }
+
+    function syncColor(source, picker, text) {
+      if (source === picker && isHex(picker.value)) {
+        text.value = picker.value.toUpperCase();
+      }
+      if (source === text && isHex(text.value)) {
+        picker.value = text.value;
+      }
+    }
+
+    function applyTheme(name) {
+      const theme = themes[name];
+      if (!theme) return;
+      dom.primaryPicker.value = theme.primary;
+      dom.primaryText.value = theme.primary;
+      dom.accentPicker.value = theme.accent;
+      dom.accentText.value = theme.accent;
+      dom.backgroundPicker.value = theme.background;
+      dom.backgroundText.value = theme.background;
+      dom.surfacePicker.value = theme.surface;
+      dom.surfaceText.value = theme.surface;
+      dom.textPicker.value = theme.text;
+      dom.textText.value = theme.text;
+    }
+
+    function applyPreset(type) {
+      const preset = presets[type];
+      if (!preset) return;
+      dom.title.value = preset.title;
+      dom.subtitle.value = preset.subtitle;
+      dom.main.value = preset.main;
+      dom.oneTitle.value = preset.oneTitle;
+      dom.oneText.value = preset.oneText;
+      dom.twoTitle.value = preset.twoTitle;
+      dom.twoText.value = preset.twoText;
+      dom.threeTitle.value = preset.threeTitle;
+      dom.threeText.value = preset.threeText;
+      dom.buttonText.value = preset.button;
+      dom.secondaryText.value = preset.secondary;
+      dom.imageAlt.value = preset.imageAlt;
+      generate();
+    }
+
+    function getConfig() {
+      const primary = isHex(dom.primaryText.value) ? dom.primaryText.value : "#003366";
+      const accent = isHex(dom.accentText.value) ? dom.accentText.value : "#FF6600";
+      const background = isHex(dom.backgroundText.value) ? dom.backgroundText.value : "#FFFFFF";
+      const surface = isHex(dom.surfaceText.value) ? dom.surfaceText.value : "#EAF3F7";
+      const text = isHex(dom.textText.value) ? dom.textText.value : "#001B3B";
+
+      let border = dom.borderStyle.value;
+      border = border
+        .replace("CURRENT_PRIMARY", primary)
+        .replace("CURRENT_ACCENT", accent);
+
+      return {
+        type: selectedType(),
+        title: escapeHtml(dom.title.value),
+        subtitle: escapeHtml(dom.subtitle.value),
+        main: escapeHtml(dom.main.value),
+        oneTitle: escapeHtml(dom.oneTitle.value),
+        oneText: escapeHtml(dom.oneText.value),
+        twoTitle: escapeHtml(dom.twoTitle.value),
+        twoText: escapeHtml(dom.twoText.value),
+        threeTitle: escapeHtml(dom.threeTitle.value),
+        threeText: escapeHtml(dom.threeText.value),
+        imageUrl: sanitizeUrl(dom.imageUrl.value, "https://via.placeholder.com/320x180?text=Add+Image"),
+        imageAlt: escapeAttr(dom.imageAlt.value || "Widget image"),
+        buttonText: escapeHtml(dom.buttonText.value || "Open Link"),
+        buttonUrl: sanitizeUrl(dom.buttonUrl.value, "#"),
+        secondaryText: escapeHtml(dom.secondaryText.value || "Learn more"),
+        secondaryUrl: sanitizeUrl(dom.secondaryUrl.value, "#"),
+        primary,
+        accent,
+        background,
+        surface,
+        text,
+        radius: dom.cornerRadius.value,
+        border,
+        shadow: dom.shadowStyle.value,
+        spacing: dom.spacing.value,
+        font: dom.fontStack.value,
+        showImage: dom.showImage.value === "yes",
+        showButton: dom.showButton.value === "yes"
+      };
+    }
+
+    function itemBlock(title, text, c) {
+      return `
+        <div style="background-color:${c.surface}; border-radius:${c.radius}; padding:12px; margin-bottom:10px; border:1px solid rgba(0,27,59,0.10); box-sizing:border-box;">
+          <div style="font-family:${c.font}; font-size:14px; font-weight:800; color:${c.primary}; margin-bottom:3px;">${title}</div>
+          <div style="font-family:${c.font}; font-size:14px; line-height:1.45; color:${c.text};">${text}</div>
+        </div>`;
+    }
+
+    function buildWidget(c) {
+      const image = c.showImage
+        ? `<img src="${c.imageUrl}" alt="${c.imageAlt}" style="display:block; width:100%; max-width:100%; height:auto; border-radius:${c.radius}; margin:0 0 14px 0; box-sizing:border-box;" />`
+        : "";
+
+      const button = c.showButton
+        ? `<a href="${c.buttonUrl}" style="display:block; width:100%; background-color:${c.primary}; color:#ffffff; text-decoration:none; text-align:center; font-family:${c.font}; font-size:14px; font-weight:800; padding:11px 12px; border-radius:${c.radius}; box-sizing:border-box; margin-top:12px;">${c.buttonText}</a>`
+        : "";
+
+      const secondary = `<p style="margin:10px 0 0 0; text-align:center;"><a href="${c.secondaryUrl}" style="font-family:${c.font}; font-size:13px; color:${c.primary}; font-weight:700; text-decoration:underline;">${c.secondaryText}</a></p>`;
+
+      let body = "";
+
+      if (c.type === "quickLinks") {
+        body = `
+          <p style="font-family:${c.font}; font-size:14px; line-height:1.5; color:${c.text}; margin:0 0 14px 0;">${c.main}</p>
+          <a href="#" style="display:block; text-decoration:none; background-color:${c.surface}; color:${c.primary}; font-family:${c.font}; font-size:14px; font-weight:800; padding:12px; border-radius:${c.radius}; margin-bottom:10px; border:1px solid rgba(0,27,59,0.10);">${c.oneTitle}<span style="display:block; font-weight:400; color:${c.text}; margin-top:3px;">${c.oneText}</span></a>
+          <a href="#" style="display:block; text-decoration:none; background-color:${c.surface}; color:${c.primary}; font-family:${c.font}; font-size:14px; font-weight:800; padding:12px; border-radius:${c.radius}; margin-bottom:10px; border:1px solid rgba(0,27,59,0.10);">${c.twoTitle}<span style="display:block; font-weight:400; color:${c.text}; margin-top:3px;">${c.twoText}</span></a>
+          <a href="#" style="display:block; text-decoration:none; background-color:${c.surface}; color:${c.primary}; font-family:${c.font}; font-size:14px; font-weight:800; padding:12px; border-radius:${c.radius}; margin-bottom:10px; border:1px solid rgba(0,27,59,0.10);">${c.threeTitle}<span style="display:block; font-weight:400; color:${c.text}; margin-top:3px;">${c.threeText}</span></a>
+          ${button}${secondary}`;
+      } else if (c.type === "weeklyFocus") {
+        body = `
+          <div style="border-left:5px solid ${c.accent}; background-color:${c.surface}; border-radius:${c.radius}; padding:12px; margin-bottom:14px;">
+            <p style="font-family:${c.font}; font-size:14px; line-height:1.5; color:${c.text}; margin:0;">${c.main}</p>
+          </div>
+          ${itemBlock(c.oneTitle, c.oneText, c)}
+          ${itemBlock(c.twoTitle, c.twoText, c)}
+          ${itemBlock(c.threeTitle, c.threeText, c)}
+          ${button}${secondary}`;
+      } else if (c.type === "video") {
+        body = `
+          ${image}
+          <p style="font-family:${c.font}; font-size:14px; line-height:1.5; color:${c.text}; margin:0 0 14px 0;">${c.main}</p>
+          ${itemBlock(c.oneTitle, c.oneText, c)}
+          ${itemBlock(c.twoTitle, c.twoText, c)}
+          ${itemBlock(c.threeTitle, c.threeText, c)}
+          ${button}${secondary}`;
+      } else if (c.type === "announcement") {
+        body = `
+          <div style="border-top:5px solid ${c.accent}; background-color:${c.surface}; border-radius:${c.radius}; padding:14px; margin-bottom:14px;">
+            <p style="font-family:${c.font}; font-size:14px; line-height:1.5; color:${c.text}; margin:0;">${c.main}</p>
+          </div>
+          ${itemBlock(c.oneTitle, c.oneText, c)}
+          ${itemBlock(c.twoTitle, c.twoText, c)}
+          ${itemBlock(c.threeTitle, c.threeText, c)}
+          ${button}${secondary}`;
+      } else {
+        body = `
+          ${image}
+          <p style="font-family:${c.font}; font-size:14px; line-height:1.5; color:${c.text}; margin:0 0 14px 0;">${c.main}</p>
+          ${itemBlock(c.oneTitle, c.oneText, c)}
+          ${itemBlock(c.twoTitle, c.twoText, c)}
+          ${itemBlock(c.threeTitle, c.threeText, c)}
+          ${button}${secondary}`;
+      }
+
+      return `
+<div style="width:100%; max-width:360px; margin:0 auto; background-color:${c.background}; color:${c.text}; border-radius:${c.radius}; border:${c.border}; box-shadow:${c.shadow}; padding:${c.spacing}; box-sizing:border-box; font-family:${c.font};">
+  <div style="background-color:${c.primary}; border-radius:${c.radius}; padding:14px; margin-bottom:14px; border-bottom:5px solid ${c.accent}; box-sizing:border-box;">
+    <h2 style="font-family:${c.font}; font-size:20px; line-height:1.2; color:#ffffff; margin:0 0 6px 0;">${c.title}</h2>
+    <p style="font-family:${c.font}; font-size:13px; line-height:1.4; color:#ffffff; margin:0;">${c.subtitle}</p>
+  </div>
+  ${body}
+</div>`.trim();
+    }
+
+    function generate() {
+      const c = getConfig();
+      const html = buildWidget(c);
+      dom.code.value = html;
+      dom.preview.srcdoc = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0; padding:12px; background:#ffffff;">${html}</body></html>`;
+    }
+
+    async function copyCode() {
+      try {
+        await navigator.clipboard.writeText(dom.code.value);
+        dom.copyStatus.textContent = "All widget code copied.";
+      } catch (error) {
+        dom.code.select();
+        document.execCommand("copy");
+        dom.copyStatus.textContent = "Code selected. Press Ctrl+C or Cmd+C if needed.";
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll(".panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `panel-${tabName}`);
+      });
+    }
+
+    function resetBuilder() {
+      document.querySelector('input[name="widgetType"][value="instructor"]').checked = true;
+      applyPreset("instructor");
+      dom.themePreset.value = "mcc";
+      applyTheme("mcc");
+      dom.cornerRadius.value = "12px";
+      dom.borderStyle.value = "1px solid #d7e0ea";
+      dom.shadowStyle.value = "0 6px 18px rgba(0,27,59,0.10)";
+      dom.spacing.value = "16px";
+      dom.fontStack.value = '"Lato", Arial, sans-serif';
+      dom.showImage.value = "yes";
+      dom.showButton.value = "yes";
+      dom.imageUrl.value = "https://via.placeholder.com/320x180?text=Add+Image";
+      dom.buttonUrl.value = "#";
+      dom.secondaryUrl.value = "#";
+      dom.copyStatus.textContent = "Ready to copy.";
+      generate();
+    }
+
+    function init() {
+      document.querySelectorAll('input[name="widgetType"]').forEach((input) => {
+        input.addEventListener("change", () => applyPreset(input.value));
+      });
+
+      document.querySelectorAll("input, select, textarea").forEach((input) => {
+        input.addEventListener("input", generate);
+        input.addEventListener("change", generate);
+      });
+
+      dom.primaryPicker.addEventListener("input", () => {
+        syncColor(dom.primaryPicker, dom.primaryPicker, dom.primaryText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      dom.primaryText.addEventListener("input", () => {
+        syncColor(dom.primaryText, dom.primaryPicker, dom.primaryText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+
+      dom.accentPicker.addEventListener("input", () => {
+        syncColor(dom.accentPicker, dom.accentPicker, dom.accentText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      dom.accentText.addEventListener("input", () => {
+        syncColor(dom.accentText, dom.accentPicker, dom.accentText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+
+      dom.backgroundPicker.addEventListener("input", () => {
+        syncColor(dom.backgroundPicker, dom.backgroundPicker, dom.backgroundText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      dom.backgroundText.addEventListener("input", () => {
+        syncColor(dom.backgroundText, dom.backgroundPicker, dom.backgroundText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+
+      dom.surfacePicker.addEventListener("input", () => {
+        syncColor(dom.surfacePicker, dom.surfacePicker, dom.surfaceText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      dom.surfaceText.addEventListener("input", () => {
+        syncColor(dom.surfaceText, dom.surfacePicker, dom.surfaceText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+
+      dom.textPicker.addEventListener("input", () => {
+        syncColor(dom.textPicker, dom.textPicker, dom.textText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      dom.textText.addEventListener("input", () => {
+        syncColor(dom.textText, dom.textPicker, dom.textText);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+
+      dom.themePreset.addEventListener("change", () => {
+        if (dom.themePreset.value !== "custom") {
+          applyTheme(dom.themePreset.value);
+          generate();
+        }
+      });
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+      });
+
+      dom.copyBtn.addEventListener("click", copyCode);
+      dom.resetBtn.addEventListener("click", resetBuilder);
+
+      generate();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
