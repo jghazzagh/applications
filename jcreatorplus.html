@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCC Brightspace Design Element Builder</title>
+  <style>
+    :root {
+      --mcc-navy: #003366;
+      --mcc-dark: #001b3b;
+      --mcc-orange: #ff6600;
+      --mcc-light-blue: #d6e8ee;
+      --mcc-teal: #008da7;
+      --app-bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #627086;
+      --border: #d8e0ea;
+      --shadow: 0 18px 42px rgba(0, 27, 59, 0.12);
+      --radius: 18px;
+      --font: "Lato", "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at top left, rgba(0, 51, 102, 0.15), transparent 32rem),
+        radial-gradient(circle at top right, rgba(255, 102, 0, 0.13), transparent 28rem),
+        linear-gradient(180deg, #ffffff 0%, var(--app-bg) 100%);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--mcc-navy);
+      z-index: 999;
+      border: 2px solid var(--mcc-navy);
+    }
+
+    .skip-link:focus { left: 8px; }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(0, 51, 102, 0.98), rgba(0, 141, 167, 0.94)),
+        radial-gradient(circle at 84% 22%, rgba(255,255,255,0.22), transparent 18rem);
+      color: #fff;
+      border-radius: 28px;
+      padding: clamp(26px, 5vw, 52px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      right: -110px;
+      top: -130px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.32);
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      max-width: 860px;
+      margin: 16px 0 0;
+      color: rgba(255,255,255,0.92);
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      line-height: 1.6;
+    }
+
+    .tabs {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 10px 26px rgba(0, 27, 59, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 900;
+      padding: 12px 16px;
+      border-radius: 11px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--mcc-navy);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.22);
+    }
+
+    .panel { display: none; margin-top: 20px; }
+    .panel.active { display: block; }
+
+    .builder-grid {
+      display: grid;
+      grid-template-columns: minmax(350px, 500px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(0,51,102,0.07), rgba(255,102,0,0.06));
+    }
+
+    .card-head h2, .card-head h3 {
+      margin: 0;
+      color: var(--mcc-dark);
+    }
+
+    .card-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card-body { padding: 20px; }
+
+    details.section {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 14px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    details.section summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+      font-weight: 900;
+      color: var(--mcc-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    details.section summary::-webkit-details-marker { display: none; }
+    details.section summary::after {
+      content: "+";
+      color: var(--mcc-orange);
+      font-size: 1.25rem;
+    }
+    details.section[open] summary::after { content: "−"; }
+
+    .section-body {
+      border-top: 1px solid var(--border);
+      padding: 16px;
+    }
+
+    .field { margin-bottom: 15px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label, .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: #26344e;
+      font-size: 0.88rem;
+      font-weight: 900;
+    }
+
+    .help {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px 11px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input:focus, select:focus, textarea:focus, button:focus {
+      outline: 3px solid rgba(0, 86, 179, 0.2);
+      outline-offset: 2px;
+      border-color: var(--mcc-navy);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 9px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 48px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    .dynamic-group {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 13px;
+      margin-bottom: 12px;
+      background: #fbfdff;
+    }
+
+    .dynamic-group h4 {
+      margin: 0 0 10px;
+      color: var(--mcc-navy);
+      font-size: 0.95rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 20px;
+    }
+
+    .preview-wrap {
+      min-height: 620px;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      padding: 22px;
+    }
+
+    iframe.preview {
+      width: 100%;
+      min-height: 580px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(0,27,59,0.12);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 11px;
+      padding: 10px 13px;
+      font-weight: 900;
+      cursor: pointer;
+      background: var(--mcc-navy);
+      color: #fff;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: var(--mcc-dark);
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--mcc-navy);
+      border: 1px solid #b8cbe0;
+    }
+
+    .btn.secondary:hover { background: #edf5ff; }
+
+    .code-output {
+      width: 100%;
+      min-height: 520px;
+      border: 0;
+      border-radius: 0;
+      background: #0f172a;
+      color: #e5edf8;
+      padding: 16px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .contrast-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .contrast-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      background: #fff;
+    }
+
+    .contrast-item strong {
+      display: block;
+      font-size: 0.86rem;
+    }
+
+    .contrast-item span {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .pass { background: #e7f8ee; color: #17613a; }
+    .warn { background: #fff4df; color: #8a4b00; }
+    .fail { background: #fff0f3; color: #9f1d35; }
+
+    .instructions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .info-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 28px rgba(0,27,59,0.08);
+    }
+
+    .info-card h2, .info-card h3 {
+      margin-top: 0;
+      color: var(--mcc-navy);
+    }
+
+    .info-card li { margin-bottom: 0.55rem; }
+
+    .callout {
+      border-left: 6px solid var(--mcc-orange);
+      background: #fff4eb;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+    }
+
+    .hidden { display: none !important; }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin: 24px 0 8px;
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 1150px) {
+      .builder-grid, .instructions-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 12px; }
+      .hero { border-radius: 20px; }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+      .tabs { position: static; }
+      .tab { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#builderPanel">Skip to builder</a>
+
+  <div class="app">
+    <header class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">MCC Brightspace Design Element Builder</div>
+        <h1>Create polished course elements without hand-coding the whole digital lasagna.</h1>
+        <p>Select an element, customize the content and design, review accessibility checks, preview the result, and copy the complete Brightspace-ready snippet.</p>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Application navigation">
+      <button type="button" class="tab active" data-tab="builder">Design Builder</button>
+      <button type="button" class="tab" data-tab="instructions">Instructions</button>
+    </nav>
+
+    <main>
+      <section class="panel active" id="panel-builder">
+        <div class="builder-grid" id="builderPanel">
+          <aside class="card">
+            <div class="card-head">
+              <h2>Element settings</h2>
+              <p>Choose an item, then customize the fields that appear.</p>
+            </div>
+
+            <div class="card-body">
+              <details class="section" open>
+                <summary>1. Choose an element</summary>
+                <div class="section-body">
+                  <div class="field">
+                    <label for="elementType">Design item</label>
+                    <select id="elementType">
+                      <option value="flipCards">Flip cards</option>
+                      <option value="tabs">Tabbed sections</option>
+                      <option value="timeline">Vertical timeline</option>
+                      <option value="callout">Colored callout box</option>
+                      <option value="photoCallout">Photo + text callout</option>
+                      <option value="accordion">Accordion section</option>
+                      <option value="mcq">Multiple-choice question</option>
+                      <option value="heroCards">Hero card boxes</option>
+                      <option value="clickReveal">Click and reveal</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="itemCount">Number of items</label>
+                    <select id="itemCount"></select>
+                    <p class="help" id="countHelp">Choose how many repeated items to generate.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="section" open>
+                <summary>2. Content</summary>
+                <div class="section-body">
+                  <div class="field">
+                    <label for="mainHeading">Main heading</label>
+                    <input id="mainHeading" type="text" value="Explore the Key Ideas" />
+                  </div>
+
+                  <div class="field">
+                    <label for="introText">Introductory text</label>
+                    <textarea id="introText">Select or interact with each item to reveal more information.</textarea>
+                  </div>
+
+                  <div id="dynamicFields"></div>
+
+                  <div class="field" id="mediaFieldWrap">
+                    <label for="mediaUrl">Image or video URL placeholder</label>
+                    <input id="mediaUrl" type="url" value="https://via.placeholder.com/640x360?text=Add+Media" />
+                  </div>
+
+                  <div class="field" id="mediaAltWrap">
+                    <label for="mediaAlt">Image alternative text</label>
+                    <input id="mediaAlt" type="text" value="Placeholder image" />
+                  </div>
+                </div>
+              </details>
+
+              <details class="section" open>
+                <summary>3. Design</summary>
+                <div class="section-body">
+                  <div class="field">
+                    <label for="themePreset">Color preset</label>
+                    <select id="themePreset">
+                      <option value="mcc" selected>MCC navy + orange</option>
+                      <option value="teal">MCC teal + navy</option>
+                      <option value="lightBlue">Light blue + navy</option>
+                      <option value="orange">Orange + navy</option>
+                      <option value="slate">Modern slate</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="primaryColorText">Primary color</label>
+                    <div class="color-row">
+                      <input id="primaryColorPicker" type="color" value="#003366" />
+                      <input id="primaryColorText" type="text" value="#003366" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="accentColorText">Accent color</label>
+                    <div class="color-row">
+                      <input id="accentColorPicker" type="color" value="#FF6600" />
+                      <input id="accentColorText" type="text" value="#FF6600" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="surfaceColorText">Card/background color</label>
+                    <div class="color-row">
+                      <input id="surfaceColorPicker" type="color" value="#EAF3F7" />
+                      <input id="surfaceColorText" type="text" value="#EAF3F7" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="textColorText">Text color</label>
+                    <div class="color-row">
+                      <input id="textColorPicker" type="color" value="#001B3B" />
+                      <input id="textColorText" type="text" value="#001B3B" />
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="cornerRadius">Rounded corners</label>
+                      <select id="cornerRadius">
+                        <option value="0px">Square</option>
+                        <option value="6px">Slight</option>
+                        <option value="12px" selected>Rounded</option>
+                        <option value="20px">Extra rounded</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="shadowStyle">Shadow</label>
+                      <select id="shadowStyle">
+                        <option value="none">None</option>
+                        <option value="0 6px 18px rgba(0,27,59,0.10)" selected>Soft</option>
+                        <option value="0 12px 28px rgba(0,27,59,0.16)">Medium</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="two-col">
+                    <div class="field">
+                      <label for="fontStack">Font</label>
+                      <select id="fontStack">
+                        <option value='"Lato", Arial, sans-serif' selected>Lato</option>
+                        <option value='Arial, Helvetica, sans-serif'>Arial</option>
+                        <option value='"Trebuchet MS", Arial, sans-serif'>Trebuchet MS</option>
+                        <option value='Verdana, Geneva, sans-serif'>Verdana</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="fontSize">Body font size</label>
+                      <select id="fontSize">
+                        <option value="16px">16px</option>
+                        <option value="17px">17px</option>
+                        <option value="18px" selected>18px</option>
+                        <option value="19px">19px</option>
+                        <option value="20px">20px</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="interactionStyle">Interaction style</label>
+                    <select id="interactionStyle">
+                      <option value="soft" selected>Soft and modern</option>
+                      <option value="bold">Bold</option>
+                      <option value="minimal">Minimal</option>
+                    </select>
+                  </div>
+
+                  <div class="contrast-grid" id="contrastChecks"></div>
+                </div>
+              </details>
+
+              <div class="btn-row">
+                <button type="button" class="btn secondary" id="resetBtn">Reset</button>
+              </div>
+            </div>
+          </aside>
+
+          <section class="workspace">
+            <div class="card">
+              <div class="card-head">
+                <h2>Live preview</h2>
+                <p>Interactive preview of the generated Brightspace element.</p>
+              </div>
+              <div class="preview-wrap">
+                <iframe id="previewFrame" class="preview" title="Generated Brightspace element preview" sandbox="allow-scripts allow-same-origin"></iframe>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>Brightspace code</h2>
+                <p>Copy the full snippet into the HTML/source editor.</p>
+              </div>
+              <div class="card-body">
+                <div class="btn-row" style="justify-content:space-between; margin-bottom:12px;">
+                  <span class="status" id="copyStatus">Ready to copy.</span>
+                  <button type="button" class="btn" id="copyBtn">Copy all code</button>
+                </div>
+              </div>
+              <textarea id="codeOutput" class="code-output" readonly spellcheck="false"></textarea>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-instructions">
+        <div class="instructions-grid">
+          <article class="info-card">
+            <h2>How to use the builder</h2>
+            <ol>
+              <li>Select a design element from the dropdown.</li>
+              <li>Choose the number of repeated items where available.</li>
+              <li>Edit the generated content fields.</li>
+              <li>Choose colors, font, size, corners, and shadow.</li>
+              <li>Review the contrast checks.</li>
+              <li>Test the live preview.</li>
+              <li>Copy all generated code.</li>
+            </ol>
+          </article>
+
+          <article class="info-card">
+            <h2>How to move it into Brightspace</h2>
+            <ol>
+              <li>Create or edit a Brightspace content page.</li>
+              <li>Open the HTML/source editor.</li>
+              <li>Paste the complete generated snippet.</li>
+              <li>Save the page.</li>
+              <li>Close and reopen the page to verify that Brightspace preserved the code.</li>
+              <li>Test every interactive item with a keyboard and mouse.</li>
+            </ol>
+          </article>
+
+          <article class="info-card">
+            <h2>Important compatibility note</h2>
+            <p>Some Brightspace environments may remove or restrict JavaScript in content pages. Static items such as callouts and timelines should work broadly. Interactive items such as tabs, flip cards, multiple-choice feedback, and click-to-reveal sections depend on inline JavaScript.</p>
+            <div class="callout">
+              Test interactive elements in your institution’s Brightspace environment before distributing them widely.
+            </div>
+          </article>
+
+          <article class="info-card">
+            <h2>Accessibility reminders</h2>
+            <ul>
+              <li>Use readable text sizes and strong color contrast.</li>
+              <li>Keep headings in a logical order.</li>
+              <li>Use meaningful button and tab labels.</li>
+              <li>Add descriptive alternative text for images.</li>
+              <li>Do not rely on color alone to show correct or incorrect answers.</li>
+              <li>Keep motion subtle and avoid flashing effects.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <p class="footer-note">MCC Brightspace Design Element Builder</p>
+  </div>
+
+  <script>
+    "use strict";
+
+    const limits = {
+      flipCards: 3,
+      tabs: 4,
+      timeline: 6,
+      callout: 1,
+      photoCallout: 1,
+      accordion: 6,
+      mcq: 4,
+      heroCards: 3,
+      clickReveal: 1
+    };
+
+    const defaults = {
+      flipCards: {
+        heading: "Explore the Key Ideas",
+        intro: "Select each card to reveal more information."
+      },
+      tabs: {
+        heading: "Explore the Topic",
+        intro: "Select each tab to review a different section."
+      },
+      timeline: {
+        heading: "Course Timeline",
+        intro: "Follow the sequence from top to bottom."
+      },
+      callout: {
+        heading: "Important Information",
+        intro: "Use this callout to highlight a key message."
+      },
+      photoCallout: {
+        heading: "Featured Resource",
+        intro: "Pair a visual with a short explanation or instructor message."
+      },
+      accordion: {
+        heading: "Frequently Asked Questions",
+        intro: "Open each section to learn more."
+      },
+      mcq: {
+        heading: "Knowledge Check",
+        intro: "Choose the best answer, then review the feedback."
+      },
+      heroCards: {
+        heading: "Choose Your Path",
+        intro: "Use these cards to introduce major options, topics, or next steps."
+      },
+      clickReveal: {
+        heading: "Click to Reveal",
+        intro: "Select the button to reveal additional content."
+      }
+    };
+
+    const themes = {
+      mcc: { primary: "#003366", accent: "#FF6600", surface: "#EAF3F7", text: "#001B3B" },
+      teal: { primary: "#008DA7", accent: "#003366", surface: "#E7F6F8", text: "#001B3B" },
+      lightBlue: { primary: "#003366", accent: "#33A1FD", surface: "#EAF5FF", text: "#001B3B" },
+      orange: { primary: "#FF6600", accent: "#003366", surface: "#FFF1E8", text: "#001B3B" },
+      slate: { primary: "#334155", accent: "#2563EB", surface: "#F1F5F9", text: "#111827" }
+    };
+
+    const dom = {
+      type: document.getElementById("elementType"),
+      count: document.getElementById("itemCount"),
+      countHelp: document.getElementById("countHelp"),
+      heading: document.getElementById("mainHeading"),
+      intro: document.getElementById("introText"),
+      dynamic: document.getElementById("dynamicFields"),
+      mediaUrl: document.getElementById("mediaUrl"),
+      mediaAlt: document.getElementById("mediaAlt"),
+      mediaFieldWrap: document.getElementById("mediaFieldWrap"),
+      mediaAltWrap: document.getElementById("mediaAltWrap"),
+      themePreset: document.getElementById("themePreset"),
+      primaryPicker: document.getElementById("primaryColorPicker"),
+      primaryText: document.getElementById("primaryColorText"),
+      accentPicker: document.getElementById("accentColorPicker"),
+      accentText: document.getElementById("accentColorText"),
+      surfacePicker: document.getElementById("surfaceColorPicker"),
+      surfaceText: document.getElementById("surfaceColorText"),
+      textPicker: document.getElementById("textColorPicker"),
+      textText: document.getElementById("textColorText"),
+      radius: document.getElementById("cornerRadius"),
+      shadow: document.getElementById("shadowStyle"),
+      font: document.getElementById("fontStack"),
+      fontSize: document.getElementById("fontSize"),
+      interaction: document.getElementById("interactionStyle"),
+      contrast: document.getElementById("contrastChecks"),
+      preview: document.getElementById("previewFrame"),
+      code: document.getElementById("codeOutput"),
+      copyBtn: document.getElementById("copyBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      copyStatus: document.getElementById("copyStatus")
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    function sanitizeUrl(value, fallback = "#") {
+      const raw = String(value ?? "").trim();
+      if (!raw) return fallback;
+      if (/^(https?:\/\/|\/|#|mailto:|tel:)/i.test(raw)) return escapeAttr(raw);
+      return fallback;
+    }
+
+    function isHex(value) {
+      return /^#[0-9A-Fa-f]{6}$/.test(String(value || ""));
+    }
+
+    function hexToRgb(hex) {
+      const clean = String(hex || "").replace("#", "");
+      if (!/^[0-9A-Fa-f]{6}$/.test(clean)) return null;
+      return {
+        r: parseInt(clean.slice(0,2), 16),
+        g: parseInt(clean.slice(2,4), 16),
+        b: parseInt(clean.slice(4,6), 16)
+      };
+    }
+
+    function luminance(hex) {
+      const rgb = hexToRgb(hex);
+      if (!rgb) return 0;
+      const vals = [rgb.r, rgb.g, rgb.b].map(c => {
+        const v = c / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return vals[0]*0.2126 + vals[1]*0.7152 + vals[2]*0.0722;
+    }
+
+    function contrastRatio(a, b) {
+      const l1 = luminance(a);
+      const l2 = luminance(b);
+      return ((Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)).toFixed(2);
+    }
+
+    function configureCount() {
+      const type = dom.type.value;
+      const max = limits[type];
+      dom.count.innerHTML = "";
+      for (let i = 1; i <= max; i++) {
+        const option = document.createElement("option");
+        option.value = String(i);
+        option.textContent = String(i);
+        dom.count.appendChild(option);
+      }
+
+      const preferred = type === "flipCards" ? 3 :
+                        type === "tabs" ? 4 :
+                        type === "timeline" ? 4 :
+                        type === "accordion" ? 4 :
+                        type === "heroCards" ? 3 :
+                        type === "mcq" ? 4 : 1;
+
+      dom.count.value = String(Math.min(preferred, max));
+      dom.count.disabled = max === 1 || type === "mcq";
+      dom.countHelp.textContent =
+        type === "flipCards" ? "Up to 3 cards in one responsive row." :
+        type === "tabs" ? "Up to 4 tabs." :
+        type === "accordion" ? "Up to 6 accordion sections." :
+        type === "heroCards" ? "Choose 1 to 3 responsive cards." :
+        type === "mcq" ? "This item always uses 4 answer choices." :
+        "Choose how many repeated items to generate.";
+    }
+
+    function group(title, body) {
+      return `<div class="dynamic-group"><h4>${title}</h4>${body}</div>`;
+    }
+
+    function renderDynamicFields() {
+      const type = dom.type.value;
+      const count = Number(dom.count.value || 1);
+      let html = "";
+
+      dom.mediaFieldWrap.classList.toggle("hidden", !["photoCallout","clickReveal"].includes(type));
+      dom.mediaAltWrap.classList.toggle("hidden", !["photoCallout","clickReveal"].includes(type));
+
+      if (type === "flipCards") {
+        for (let i=1; i<=count; i++) {
+          html += group(`Flip card ${i}`, `
+            <div class="field"><label for="front${i}">Front text</label><input id="front${i}" data-key="front${i}" type="text" value="Card ${i} Front" /></div>
+            <div class="field"><label for="back${i}">Back text</label><textarea id="back${i}" data-key="back${i}">Add the detailed explanation for card ${i} here.</textarea></div>`);
+        }
+      } else if (type === "tabs") {
+        for (let i=1; i<=count; i++) {
+          html += group(`Tab ${i}`, `
+            <div class="field"><label for="tabLabel${i}">Tab label</label><input id="tabLabel${i}" data-key="tabLabel${i}" type="text" value="Tab ${i}" /></div>
+            <div class="field"><label for="tabContent${i}">Tab content</label><textarea id="tabContent${i}" data-key="tabContent${i}">Add content for tab ${i} here.</textarea></div>`);
+        }
+      } else if (type === "timeline") {
+        for (let i=1; i<=count; i++) {
+          html += group(`Timeline item ${i}`, `
+            <div class="field"><label for="timeTitle${i}">Title</label><input id="timeTitle${i}" data-key="timeTitle${i}" type="text" value="Step ${i}" /></div>
+            <div class="field"><label for="timeText${i}">Description</label><textarea id="timeText${i}" data-key="timeText${i}">Describe this point in the timeline.</textarea></div>`);
+        }
+      } else if (type === "callout") {
+        html += group("Callout content", `
+          <div class="field"><label for="calloutTitle">Callout title</label><input id="calloutTitle" data-key="calloutTitle" type="text" value="Important Note" /></div>
+          <div class="field"><label for="calloutText">Callout text</label><textarea id="calloutText" data-key="calloutText">Use this space to emphasize an important message, reminder, warning, or success tip.</textarea></div>`);
+      } else if (type === "photoCallout") {
+        html += group("Photo callout content", `
+          <div class="field"><label for="photoTitle">Heading</label><input id="photoTitle" data-key="photoTitle" type="text" value="Featured Resource" /></div>
+          <div class="field"><label for="photoText">Text</label><textarea id="photoText" data-key="photoText">Add a concise explanation beside the image. The image column uses approximately 25% of the box.</textarea></div>`);
+      } else if (type === "accordion") {
+        for (let i=1; i<=count; i++) {
+          html += group(`Accordion section ${i}`, `
+            <div class="field"><label for="accTitle${i}">Section title</label><input id="accTitle${i}" data-key="accTitle${i}" type="text" value="Section ${i}" /></div>
+            <div class="field"><label for="accText${i}">Section content</label><textarea id="accText${i}" data-key="accText${i}">Add the content for section ${i} here.</textarea></div>`);
+        }
+      } else if (type === "mcq") {
+        html += group("Question", `
+          <div class="field"><label for="questionText">Question text</label><textarea id="questionText" data-key="questionText">Which answer best demonstrates the concept?</textarea></div>
+          <div class="field"><label for="correctChoice">Correct answer</label><select id="correctChoice" data-key="correctChoice">
+            <option value="1" selected>Choice 1</option><option value="2">Choice 2</option><option value="3">Choice 3</option><option value="4">Choice 4</option>
+          </select></div>`);
+
+        for (let i=1; i<=4; i++) {
+          html += group(`Answer choice ${i}`, `
+            <div class="field"><label for="choice${i}">Answer text</label><input id="choice${i}" data-key="choice${i}" type="text" value="${i===1 ? "This is the correct answer." : "Answer choice " + i}" /></div>
+            <div class="field"><label for="feedback${i}">Feedback</label><textarea id="feedback${i}" data-key="feedback${i}">${i===1 ? "Correct. This answer best matches the concept." : "Not quite. Review the concept and try again."}</textarea></div>`);
+        }
+      } else if (type === "heroCards") {
+        for (let i=1; i<=count; i++) {
+          html += group(`Hero card ${i}`, `
+            <div class="field"><label for="heroTitle${i}">Card title</label><input id="heroTitle${i}" data-key="heroTitle${i}" type="text" value="Option ${i}" /></div>
+            <div class="field"><label for="heroText${i}">Card text</label><textarea id="heroText${i}" data-key="heroText${i}">Explain this option, topic, or pathway.</textarea></div>
+            <div class="field"><label for="heroButton${i}">Button text</label><input id="heroButton${i}" data-key="heroButton${i}" type="text" value="Learn More" /></div>
+            <div class="field"><label for="heroUrl${i}">Button URL</label><input id="heroUrl${i}" data-key="heroUrl${i}" type="url" value="#" /></div>`);
+        }
+      } else if (type === "clickReveal") {
+        html += group("Reveal content", `
+          <div class="field"><label for="revealButton">Button text</label><input id="revealButton" data-key="revealButton" type="text" value="Reveal More" /></div>
+          <div class="field"><label for="revealText">Hidden content</label><textarea id="revealText" data-key="revealText">This hidden section can contain text, an image, or a linked video.</textarea></div>
+          <div class="field"><label for="revealMediaType">Media type</label><select id="revealMediaType" data-key="revealMediaType">
+            <option value="none">No media</option>
+            <option value="image" selected>Image</option>
+            <option value="video">Video iframe</option>
+          </select></div>`);
+      }
+
+      dom.dynamic.innerHTML = html;
+      dom.dynamic.querySelectorAll("input, textarea, select").forEach(el => {
+        el.addEventListener("input", generate);
+        el.addEventListener("change", generate);
+      });
+    }
+
+    function getValue(key, fallback="") {
+      const el = dom.dynamic.querySelector(`[data-key="${key}"]`);
+      return el ? String(el.value || "").trim() : fallback;
+    }
+
+    function getConfig() {
+      return {
+        type: dom.type.value,
+        count: Number(dom.count.value || 1),
+        heading: escapeHtml(dom.heading.value),
+        intro: escapeHtml(dom.intro.value),
+        mediaUrl: sanitizeUrl(dom.mediaUrl.value, "#"),
+        mediaAlt: escapeAttr(dom.mediaAlt.value || "Media"),
+        primary: isHex(dom.primaryText.value) ? dom.primaryText.value : "#003366",
+        accent: isHex(dom.accentText.value) ? dom.accentText.value : "#FF6600",
+        surface: isHex(dom.surfaceText.value) ? dom.surfaceText.value : "#EAF3F7",
+        text: isHex(dom.textText.value) ? dom.textText.value : "#001B3B",
+        radius: dom.radius.value,
+        shadow: dom.shadow.value,
+        font: dom.font.value,
+        fontSize: dom.fontSize.value,
+        interaction: dom.interaction.value
+      };
+    }
+
+    function wrapperStart(c) {
+      return `<div style="max-width:1120px; margin:0 auto; font-family:${c.font}; font-size:${c.fontSize}; line-height:1.6; color:${c.text};">`;
+    }
+
+    function headingBlock(c) {
+      return `
+        <div style="background-color:${c.primary}; color:#ffffff; padding:20px; border-radius:${c.radius}; margin-bottom:18px; border-bottom:6px solid ${c.accent}; box-shadow:${c.shadow};">
+          <h2 style="margin:0 0 8px 0; color:#ffffff; font-family:${c.font}; font-size:1.8rem; line-height:1.2;">${c.heading}</h2>
+          <p style="margin:0; color:#ffffff; font-family:${c.font}; font-size:${c.fontSize};">${c.intro}</p>
+        </div>`;
+    }
+
+    function buildFlipCards(c) {
+      let cards = "";
+      for (let i=1; i<=c.count; i++) {
+        const front = escapeHtml(getValue(`front${i}`, `Card ${i} Front`));
+        const back = escapeHtml(getValue(`back${i}`, `Card ${i} Back`));
+        cards += `
+          <button type="button" class="mcc-flip-card" aria-expanded="false" style="flex:1 1 calc(33.333% - 14px); min-width:220px; min-height:210px; border:0; background:transparent; padding:0; cursor:pointer; perspective:1000px;">
+            <span class="mcc-flip-inner" style="position:relative; display:block; width:100%; min-height:210px; transition:transform .5s; transform-style:preserve-3d;">
+              <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:20px; background-color:${c.primary}; color:#fff; border-radius:${c.radius}; box-shadow:${c.shadow}; backface-visibility:hidden; font-family:${c.font}; font-size:1.15rem; font-weight:800; text-align:center;">${front}</span>
+              <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:20px; background-color:${c.surface}; color:${c.text}; border:2px solid ${c.primary}; border-radius:${c.radius}; box-shadow:${c.shadow}; backface-visibility:hidden; transform:rotateY(180deg); font-family:${c.font}; font-size:${c.fontSize}; text-align:center;">${back}</span>
+            </span>
+          </button>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:stretch;">${cards}</div>
+        <script>
+          document.currentScript.parentElement.querySelectorAll('.mcc-flip-card').forEach(function(card){
+            card.addEventListener('click', function(){
+              var inner = card.querySelector('.mcc-flip-inner');
+              var open = card.getAttribute('aria-expanded') === 'true';
+              card.setAttribute('aria-expanded', String(!open));
+              inner.style.transform = open ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            });
+          });
+        <\/script>
+      </div>`;
+    }
+
+    function buildTabs(c) {
+      let buttons = "";
+      let panels = "";
+
+      for (let i=1; i<=c.count; i++) {
+        const label = escapeHtml(getValue(`tabLabel${i}`, `Tab ${i}`));
+        const content = escapeHtml(getValue(`tabContent${i}`, `Content ${i}`));
+        buttons += `<button type="button" role="tab" aria-selected="${i===1 ? "true":"false"}" aria-controls="mcc-tab-panel-${i}" id="mcc-tab-${i}" style="border:0; border-bottom:4px solid ${i===1 ? c.accent : "transparent"}; background:${i===1 ? c.surface : "#ffffff"}; color:${c.primary}; padding:11px 14px; font-family:${c.font}; font-weight:800; cursor:pointer;">${label}</button>`;
+        panels += `<div role="tabpanel" id="mcc-tab-panel-${i}" aria-labelledby="mcc-tab-${i}" ${i===1 ? "" : "hidden"} style="padding:18px; border:1px solid #d8e0ea; border-radius:0 0 ${c.radius} ${c.radius}; background:#fff; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">${content}</div>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <div class="mcc-tabs">
+          <div role="tablist" aria-label="${c.heading}" style="display:flex; flex-wrap:wrap; border-bottom:1px solid #d8e0ea;">${buttons}</div>
+          ${panels}
+        </div>
+        <script>
+          (function(root){
+            var tabs = root.querySelectorAll('[role="tab"]');
+            var panels = root.querySelectorAll('[role="tabpanel"]');
+            tabs.forEach(function(tab){
+              tab.addEventListener('click', function(){
+                tabs.forEach(function(t){
+                  t.setAttribute('aria-selected','false');
+                  t.style.borderBottomColor='transparent';
+                  t.style.background='#ffffff';
+                });
+                panels.forEach(function(p){ p.hidden=true; });
+                tab.setAttribute('aria-selected','true');
+                tab.style.borderBottomColor='${c.accent}';
+                tab.style.background='${c.surface}';
+                root.querySelector('#'+tab.getAttribute('aria-controls')).hidden=false;
+              });
+            });
+          })(document.currentScript.parentElement);
+        <\/script>
+      </div>`;
+    }
+
+    function buildTimeline(c) {
+      let items = "";
+      for (let i=1; i<=c.count; i++) {
+        const title = escapeHtml(getValue(`timeTitle${i}`, `Step ${i}`));
+        const text = escapeHtml(getValue(`timeText${i}`, `Description ${i}`));
+        items += `
+          <div style="position:relative; padding:0 0 20px 34px;">
+            <span style="position:absolute; left:-11px; top:3px; width:20px; height:20px; border-radius:50%; background:${c.accent}; border:4px solid #fff; box-shadow:0 0 0 2px ${c.primary};"></span>
+            <h3 style="margin:0 0 6px; color:${c.primary}; font-family:${c.font};">${title}</h3>
+            <p style="margin:0; font-family:${c.font}; font-size:${c.fontSize}; color:${c.text};">${text}</p>
+          </div>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <div style="border-left:4px solid ${c.primary}; margin-left:12px;">${items}</div>
+      </div>`;
+    }
+
+    function buildCallout(c) {
+      const title = escapeHtml(getValue("calloutTitle","Important Note"));
+      const text = escapeHtml(getValue("calloutText","Callout text"));
+      return `${wrapperStart(c)}
+        <div style="background:${c.surface}; border-left:8px solid ${c.accent}; border-radius:${c.radius}; padding:20px; box-shadow:${c.shadow};">
+          <h2 style="margin:0 0 8px; color:${c.primary}; font-family:${c.font};">${title}</h2>
+          <p style="margin:0; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">${text}</p>
+        </div>
+      </div>`;
+    }
+
+    function buildPhotoCallout(c) {
+      const title = escapeHtml(getValue("photoTitle","Featured Resource"));
+      const text = escapeHtml(getValue("photoText","Add text here."));
+      return `${wrapperStart(c)}
+        <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:center; background:${c.surface}; border:1px solid #d8e0ea; border-radius:${c.radius}; padding:18px; box-shadow:${c.shadow};">
+          <div style="flex:1 1 25%; min-width:180px;">
+            <img src="${c.mediaUrl}" alt="${c.mediaAlt}" style="display:block; width:100%; height:auto; border-radius:${c.radius};" />
+          </div>
+          <div style="flex:3 1 70%; min-width:240px;">
+            <h2 style="margin:0 0 8px; color:${c.primary}; font-family:${c.font};">${title}</h2>
+            <p style="margin:0; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">${text}</p>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function buildAccordion(c) {
+      let sections = "";
+      for (let i=1; i<=c.count; i++) {
+        const title = escapeHtml(getValue(`accTitle${i}`,`Section ${i}`));
+        const text = escapeHtml(getValue(`accText${i}`,`Content ${i}`));
+        sections += `
+          <details style="border:1px solid #d8e0ea; border-radius:${c.radius}; margin-bottom:10px; background:#fff; box-shadow:${c.shadow};">
+            <summary style="cursor:pointer; padding:14px 16px; font-family:${c.font}; font-weight:800; color:${c.primary}; background:${c.surface}; border-radius:${c.radius};">${title}</summary>
+            <div style="padding:16px; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">${text}</div>
+          </details>`;
+      }
+      return `${wrapperStart(c)}${headingBlock(c)}${sections}</div>`;
+    }
+
+    function buildMCQ(c) {
+      const q = escapeHtml(getValue("questionText","Which answer is correct?"));
+      const correct = getValue("correctChoice","1");
+      let choices = "";
+
+      for (let i=1; i<=4; i++) {
+        const answer = escapeHtml(getValue(`choice${i}`,`Choice ${i}`));
+        const feedback = escapeHtml(getValue(`feedback${i}`,`Feedback ${i}`));
+        choices += `
+          <button type="button" class="mcc-answer" data-correct="${String(i===Number(correct))}" data-feedback="${feedback}" style="display:block; width:100%; text-align:left; margin-bottom:10px; padding:12px 14px; border:1px solid #cdd8e5; border-radius:${c.radius}; background:#fff; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize}; cursor:pointer;">${answer}</button>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <div style="background:#fff; border:1px solid #d8e0ea; border-radius:${c.radius}; padding:18px; box-shadow:${c.shadow};">
+          <h3 style="margin:0 0 14px; color:${c.primary}; font-family:${c.font};">${q}</h3>
+          ${choices}
+          <div class="mcc-feedback" role="status" aria-live="polite" style="display:none; margin-top:12px; padding:12px; border-radius:${c.radius}; font-family:${c.font}; font-size:${c.fontSize};"></div>
+        </div>
+        <script>
+          (function(root){
+            var feedback = root.querySelector('.mcc-feedback');
+            root.querySelectorAll('.mcc-answer').forEach(function(btn){
+              btn.addEventListener('click', function(){
+                var correct = btn.getAttribute('data-correct') === 'true';
+                feedback.style.display='block';
+                feedback.style.background = correct ? '#e7f8ee' : '#fff0f3';
+                feedback.style.color = correct ? '#17613a' : '#9f1d35';
+                feedback.textContent = (correct ? 'Correct. ' : 'Not quite. ') + btn.getAttribute('data-feedback');
+              });
+            });
+          })(document.currentScript.parentElement);
+        <\/script>
+      </div>`;
+    }
+
+    function buildHeroCards(c) {
+      let cards = "";
+      for (let i=1; i<=c.count; i++) {
+        const title = escapeHtml(getValue(`heroTitle${i}`,`Option ${i}`));
+        const text = escapeHtml(getValue(`heroText${i}`,`Description ${i}`));
+        const button = escapeHtml(getValue(`heroButton${i}`,"Learn More"));
+        const url = sanitizeUrl(getValue(`heroUrl${i}`,"#"),"#");
+        cards += `
+          <div style="flex:1 1 calc(${100/c.count}% - 16px); min-width:240px; background:${c.surface}; border-top:6px solid ${i%2===0 ? c.accent : c.primary}; border-radius:${c.radius}; padding:20px; box-shadow:${c.shadow};">
+            <h3 style="margin:0 0 8px; color:${c.primary}; font-family:${c.font};">${title}</h3>
+            <p style="margin:0 0 14px; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">${text}</p>
+            <a href="${url}" style="display:inline-block; background:${c.primary}; color:#fff; text-decoration:none; padding:10px 13px; border-radius:${c.radius}; font-family:${c.font}; font-weight:800;">${button}</a>
+          </div>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:stretch;">${cards}</div>
+      </div>`;
+    }
+
+    function buildClickReveal(c) {
+      const button = escapeHtml(getValue("revealButton","Reveal More"));
+      const text = escapeHtml(getValue("revealText","Hidden content"));
+      const mediaType = getValue("revealMediaType","none");
+      let media = "";
+
+      if (mediaType === "image") {
+        media = `<img src="${c.mediaUrl}" alt="${c.mediaAlt}" style="display:block; width:100%; height:auto; border-radius:${c.radius}; margin-top:14px;" />`;
+      } else if (mediaType === "video") {
+        media = `<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:${c.radius}; margin-top:14px;"><iframe src="${c.mediaUrl}" title="${c.mediaAlt}" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allowfullscreen></iframe></div>`;
+      }
+
+      return `${wrapperStart(c)}${headingBlock(c)}
+        <button type="button" class="mcc-reveal-btn" aria-expanded="false" style="background:${c.primary}; color:#fff; border:0; border-radius:${c.radius}; padding:11px 15px; font-family:${c.font}; font-weight:800; cursor:pointer;">${button}</button>
+        <div class="mcc-reveal-panel" hidden style="margin-top:12px; background:${c.surface}; border-left:6px solid ${c.accent}; border-radius:${c.radius}; padding:18px; box-shadow:${c.shadow}; color:${c.text}; font-family:${c.font}; font-size:${c.fontSize};">
+          <p style="margin:0;">${text}</p>
+          ${media}
+        </div>
+        <script>
+          (function(root){
+            var btn = root.querySelector('.mcc-reveal-btn');
+            var panel = root.querySelector('.mcc-reveal-panel');
+            btn.addEventListener('click', function(){
+              var open = btn.getAttribute('aria-expanded') === 'true';
+              btn.setAttribute('aria-expanded', String(!open));
+              panel.hidden = open;
+            });
+          })(document.currentScript.parentElement);
+        <\/script>
+      </div>`;
+    }
+
+    function buildElement(c) {
+      switch(c.type) {
+        case "flipCards": return buildFlipCards(c);
+        case "tabs": return buildTabs(c);
+        case "timeline": return buildTimeline(c);
+        case "callout": return buildCallout(c);
+        case "photoCallout": return buildPhotoCallout(c);
+        case "accordion": return buildAccordion(c);
+        case "mcq": return buildMCQ(c);
+        case "heroCards": return buildHeroCards(c);
+        case "clickReveal": return buildClickReveal(c);
+        default: return buildCallout(c);
+      }
+    }
+
+    function renderContrast(c) {
+      const checks = [
+        { label:"Primary on white", ratio:contrastRatio(c.primary,"#FFFFFF") },
+        { label:"Text on surface", ratio:contrastRatio(c.text,c.surface) },
+        { label:"White on primary", ratio:contrastRatio("#FFFFFF",c.primary) }
+      ];
+
+      dom.contrast.innerHTML = checks.map(check => {
+        const ratio = Number(check.ratio);
+        const cls = ratio >= 4.5 ? "pass" : ratio >= 3 ? "warn" : "fail";
+        const label = ratio >= 4.5 ? "Pass AA" : ratio >= 3 ? "Large text only" : "Fail";
+        return `<div class="contrast-item">
+          <div><strong>${check.label}</strong><span>Contrast ratio ${check.ratio}:1</span></div>
+          <span class="badge ${cls}">${label}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function generate() {
+      const c = getConfig();
+      const code = buildElement(c);
+      dom.code.value = code;
+      dom.preview.srcdoc = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0; padding:18px; background:#ffffff;">${code}</body></html>`;
+      renderContrast(c);
+    }
+
+    function syncColor(source, picker, text) {
+      if (source === picker && isHex(picker.value)) text.value = picker.value.toUpperCase();
+      if (source === text && isHex(text.value)) picker.value = text.value;
+    }
+
+    function applyTheme(name) {
+      const t = themes[name];
+      if (!t) return;
+      dom.primaryPicker.value = t.primary;
+      dom.primaryText.value = t.primary;
+      dom.accentPicker.value = t.accent;
+      dom.accentText.value = t.accent;
+      dom.surfacePicker.value = t.surface;
+      dom.surfaceText.value = t.surface;
+      dom.textPicker.value = t.text;
+      dom.textText.value = t.text;
+    }
+
+    function setDefaults() {
+      const d = defaults[dom.type.value];
+      dom.heading.value = d.heading;
+      dom.intro.value = d.intro;
+      configureCount();
+      renderDynamicFields();
+      generate();
+    }
+
+    async function copyCode() {
+      try {
+        await navigator.clipboard.writeText(dom.code.value);
+        dom.copyStatus.textContent = "All code copied.";
+      } catch (error) {
+        dom.code.select();
+        document.execCommand("copy");
+        dom.copyStatus.textContent = "Code selected. Press Ctrl+C or Cmd+C if needed.";
+      }
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tab === name);
+      });
+      document.querySelectorAll(".panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === `panel-${name}`);
+      });
+    }
+
+    function resetBuilder() {
+      dom.type.value = "flipCards";
+      dom.themePreset.value = "mcc";
+      applyTheme("mcc");
+      dom.radius.value = "12px";
+      dom.shadow.value = "0 6px 18px rgba(0,27,59,0.10)";
+      dom.font.value = '"Lato", Arial, sans-serif';
+      dom.fontSize.value = "18px";
+      dom.interaction.value = "soft";
+      dom.mediaUrl.value = "https://via.placeholder.com/640x360?text=Add+Media";
+      dom.mediaAlt.value = "Placeholder image";
+      dom.copyStatus.textContent = "Ready to copy.";
+      setDefaults();
+    }
+
+    function bindColor(picker, text) {
+      picker.addEventListener("input", () => {
+        syncColor(picker,picker,text);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+      text.addEventListener("input", () => {
+        syncColor(text,picker,text);
+        dom.themePreset.value = "custom";
+        generate();
+      });
+    }
+
+    function init() {
+      dom.type.addEventListener("change", setDefaults);
+      dom.count.addEventListener("change", () => {
+        renderDynamicFields();
+        generate();
+      });
+
+      [dom.heading,dom.intro,dom.mediaUrl,dom.mediaAlt,dom.radius,dom.shadow,dom.font,dom.fontSize,dom.interaction]
+        .forEach(el => {
+          el.addEventListener("input", generate);
+          el.addEventListener("change", generate);
+        });
+
+      dom.themePreset.addEventListener("change", () => {
+        if (dom.themePreset.value !== "custom") {
+          applyTheme(dom.themePreset.value);
+          generate();
+        }
+      });
+
+      bindColor(dom.primaryPicker,dom.primaryText);
+      bindColor(dom.accentPicker,dom.accentText);
+      bindColor(dom.surfacePicker,dom.surfaceText);
+      bindColor(dom.textPicker,dom.textText);
+
+      dom.copyBtn.addEventListener("click", copyCode);
+      dom.resetBtn.addEventListener("click", resetBuilder);
+
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+      });
+
+      setDefaults();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
