@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fartin' MAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#F26722;
+    --orange-bright:#F9A03F;
+    --orange-deep:#C24E12;
+    --navy:#132a4d;
+    --navy-2:#1B3A6B;
+    --blue:#2E86C1;
+    --sky:#4FB0F0;
+    --cream:#FCEFD8;
+    --ink:#160f08;
+    --good-green:#8fd694;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:"Fredoka",system-ui,sans-serif;
+    color:var(--cream);
+    background:
+      radial-gradient(circle at 50% 34%, rgba(255,255,255,.10), transparent 45%),
+      radial-gradient(circle at 50% 60%, var(--navy-2), var(--navy) 60%, #0c1c33 100%);
+    overflow-x:hidden;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    position:relative;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* faint tartan wash behind everything */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    opacity:.06;
+    background-image:
+      repeating-linear-gradient(0deg, var(--orange) 0 3px, transparent 3px 46px),
+      repeating-linear-gradient(90deg, var(--orange) 0 3px, transparent 3px 46px),
+      repeating-linear-gradient(0deg, var(--sky) 0 2px, transparent 2px 92px),
+      repeating-linear-gradient(90deg, var(--sky) 0 2px, transparent 2px 92px);
+  }
+
+  .wrap{position:relative; z-index:1; width:100%; max-width:720px; padding:18px 16px 60px; display:flex; flex-direction:column; align-items:center;}
+
+  header{margin-top:10px;}
+  .kicker{
+    font-family:"Fredoka"; font-weight:600; letter-spacing:.32em; text-transform:uppercase;
+    font-size:.72rem; color:var(--orange-bright); opacity:.9; margin-bottom:6px;
+  }
+  h1{
+    font-family:"Luckiest Guy",cursive;
+    font-size:clamp(2.6rem,11vw,5rem);
+    line-height:.92; margin:0;
+    color:var(--orange);
+    -webkit-text-stroke:3px var(--ink);
+    text-shadow:0 5px 0 var(--orange-deep), 0 7px 0 rgba(0,0,0,.35);
+    transform:rotate(-2deg);
+  }
+  h1 .mac{color:var(--sky); display:inline-block; transform:rotate(3deg);}
+  .subtitle{font-weight:500; color:var(--cream); opacity:.8; margin:12px 0 2px; font-size:.98rem;}
+
+  /* Scoreboard */
+  .board{
+    margin:14px 0 4px;
+    background:linear-gradient(180deg,#0e2244 0%, #0a1a33 100%);
+    border:3px solid var(--ink);
+    border-radius:18px;
+    padding:12px 26px 14px;
+    box-shadow:0 6px 0 var(--ink), inset 0 0 0 2px rgba(79,176,240,.25);
+    min-width:min(360px,86vw);
+  }
+  .board .lbl{font-weight:600; letter-spacing:.24em; text-transform:uppercase; font-size:.66rem; color:var(--sky); opacity:.9;}
+  .count{
+    font-family:"Luckiest Guy",cursive;
+    font-size:clamp(3rem,15vw,5.4rem);
+    line-height:1; color:var(--orange-bright);
+    text-shadow:0 3px 0 var(--orange-deep), 0 0 24px rgba(249,160,63,.35);
+    transition:transform .09s ease;
+  }
+  .count.bump{transform:scale(1.14) rotate(-1deg);}
+  .best{font-weight:600; font-size:.82rem; color:var(--cream); opacity:.7; margin-top:2px;}
+
+  /* Combo meter */
+  .combo{height:12px; width:min(360px,86vw); margin:10px auto 0; background:rgba(0,0,0,.35);
+    border:2px solid var(--ink); border-radius:99px; overflow:hidden; opacity:.35; transition:opacity .2s;}
+  .combo.on{opacity:1;}
+  .combo>i{display:block; height:100%; width:0%;
+    background:linear-gradient(90deg,var(--sky),var(--orange-bright)); transition:width .12s ease;}
+  .combo-label{font-weight:700; font-size:.74rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--orange-bright); height:1em; margin-top:5px; opacity:0; transition:opacity .15s;}
+  .combo-label.on{opacity:1;}
+
+  /* MAC stage */
+  .stage{position:relative; margin-top:10px; width:min(420px,92vw);}
+  #macBtn{
+    background:none; border:none; padding:0; margin:0; cursor:pointer; display:block; width:100%;
+    filter:drop-shadow(0 18px 18px rgba(0,0,0,.45));
+    outline:none;
+  }
+  #macBtn:focus-visible{outline:4px dashed var(--sky); outline-offset:8px; border-radius:30px;}
+  #macBtn svg{width:100%; height:auto; display:block; overflow:visible;}
+
+  #macWrap{transform-origin:50% 92%; transition:transform .06s ease-out;}
+  #macWrap.squash{transform:scaleY(.9) scaleX(1.07) translateY(6px);}
+  #macWrap.stretch{transform:scaleY(1.06) scaleX(.96) translateY(-4px);}
+
+  #tam, #brooch, #beard{cursor:pointer;}
+
+  .hint{font-weight:500; color:var(--cream); opacity:.62; margin-top:8px; font-size:.9rem;}
+  .whisper{font-weight:500; color:var(--sky); opacity:.55; margin-top:2px; font-size:.78rem;}
+
+  /* speech bubble */
+  .say{
+    position:relative; display:inline-block; margin-top:14px;
+    background:var(--cream); color:var(--ink); font-weight:600;
+    padding:8px 16px; border-radius:16px; border:3px solid var(--ink);
+    box-shadow:0 4px 0 var(--ink); min-height:1.2em; font-size:.98rem;
+    transition:transform .1s;
+  }
+  .say::after{content:""; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    border:8px solid transparent; border-bottom-color:var(--ink);}
+  .say::before{content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    border:8px solid transparent; border-bottom-color:var(--cream); z-index:1;}
+  .say.pulse{transform:translateY(-3px) scale(1.03);}
+
+  /* pop comic text */
+  .pop{position:absolute; pointer-events:none; font-family:"Luckiest Guy",cursive;
+    color:var(--orange-bright); -webkit-text-stroke:2px var(--ink);
+    font-size:2rem; z-index:5; animation:popup 1s ease-out forwards; text-shadow:0 3px 0 var(--ink);}
+  @keyframes popup{
+    0%{transform:translate(-50%,0) scale(.4) rotate(var(--r)); opacity:0;}
+    18%{transform:translate(-50%,-18px) scale(1.15) rotate(var(--r)); opacity:1;}
+    100%{transform:translate(-50%,-90px) scale(1) rotate(var(--r)); opacity:0;}
+  }
+
+  /* banner for dookie */
+  .banner{
+    position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0; transition:opacity .18s;
+  }
+  .banner.show{opacity:1;}
+  .banner .card{
+    font-family:"Luckiest Guy",cursive; color:var(--cream);
+    -webkit-text-stroke:3px var(--ink);
+    font-size:clamp(2rem,9vw,4.2rem); text-align:center; line-height:1;
+    text-shadow:0 6px 0 var(--orange-deep);
+    background:radial-gradient(circle, rgba(19,42,77,.9), rgba(10,20,40,.55));
+    padding:40px 30px; border-radius:24px; transform:scale(.8) rotate(-3deg);
+    transition:transform .25s cubic-bezier(.2,1.4,.4,1);
+  }
+  .banner.show .card{transform:scale(1) rotate(-3deg);}
+  .banner small{display:block; font-family:"Fredoka"; -webkit-text-stroke:0; font-weight:600;
+    font-size:1rem; color:var(--sky); margin-top:14px; text-shadow:none; letter-spacing:.1em;}
+
+  /* top controls */
+  .controls{position:fixed; top:12px; right:12px; z-index:30; display:flex; gap:8px;}
+  .ctrl{font-family:"Fredoka"; font-weight:600; font-size:.85rem; color:var(--cream);
+    background:rgba(10,20,40,.75); border:2px solid var(--ink); border-radius:12px;
+    padding:7px 11px; cursor:pointer; box-shadow:0 3px 0 var(--ink);}
+  .ctrl:active{transform:translateY(2px); box-shadow:0 1px 0 var(--ink);}
+
+  /* hidden thistle */
+  #thistle{position:fixed; bottom:10px; left:12px; z-index:20; width:30px; height:30px;
+    opacity:.14; cursor:pointer; transition:opacity .3s, transform .3s;}
+  #thistle:hover{opacity:.6; transform:scale(1.15) rotate(-8deg);}
+
+  /* disco overlay */
+  #disco{position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0; mix-blend-mode:screen;
+    background:conic-gradient(from 0deg, #ff005150,#ffb70050,#00e5ff50,#8a2be250,#ff005150);
+    transition:opacity .3s;}
+  body.disco #disco{opacity:.5; animation:spin 6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  body.disco h1{animation:rave .6s steps(2) infinite;}
+  @keyframes rave{50%{filter:hue-rotate(180deg);}}
+
+  /* frenzy tint */
+  #frenzy{position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0;
+    background:radial-gradient(circle, transparent 40%, rgba(242,103,34,.35)); transition:opacity .2s;}
+  body.frenzy #frenzy{opacity:1;}
+
+  /* screen shake */
+  @keyframes shake{
+    0%,100%{transform:translate(0,0);}
+    20%{transform:translate(-8px,4px) rotate(-.6deg);}
+    40%{transform:translate(7px,-5px) rotate(.6deg);}
+    60%{transform:translate(-6px,6px);}
+    80%{transform:translate(5px,-3px);}
+  }
+  .wrap.shake{animation:shake .4s;}
+
+  footer{margin-top:26px; font-size:.72rem; opacity:.45; font-weight:500;}
+
+  @media (prefers-reduced-motion: reduce){
+    .wrap.shake{animation:none;}
+    body.disco #disco{animation:none;}
+    #macWrap{transition:none;}
+    .pop{animation-duration:.6s;}
+  }
+</style>
+</head>
+<body>
+  <div id="disco"></div>
+  <div id="frenzy"></div>
+
+  <div class="controls">
+    <button class="ctrl" id="muteBtn" aria-pressed="false">🔊 Sound: On</button>
+  </div>
+
+  <div class="wrap" id="wrap">
+    <header>
+      <div class="kicker">Waco's Windiest Highlander</div>
+      <h1>Fartin' <span class="mac">MAC</span></h1>
+      <div class="subtitle">Gie the wee laddie a poke and see what escapes.</div>
+    </header>
+
+    <div class="board" aria-live="polite">
+      <div class="lbl">Farts Tooted</div>
+      <div class="count" id="count">0</div>
+      <div class="best" id="best">Best streak: 0</div>
+    </div>
+
+    <div class="combo" id="comboBar"><i id="comboFill"></i></div>
+    <div class="combo-label" id="comboLabel"></div>
+
+    <div class="stage">
+      <button id="macBtn" aria-label="Poke MAC to make him fart">
+        <!-- MAC the Highlander (orange & blue) -->
+        <svg viewBox="0 0 400 470" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="badge" cx="50%" cy="40%" r="70%">
+              <stop offset="0%" stop-color="#F9A03F"/>
+              <stop offset="70%" stop-color="#F26722"/>
+              <stop offset="100%" stop-color="#C24E12"/>
+            </radialGradient>
+            <pattern id="tartan" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+              <rect width="26" height="26" fill="#1B3A6B"/>
+              <rect width="26" height="13" fill="#234f8a"/>
+              <rect width="13" height="26" fill="#234f8a" opacity=".55"/>
+              <rect x="0" y="0" width="5" height="26" fill="#F26722" opacity=".9"/>
+              <rect x="0" y="0" width="26" height="5" fill="#F26722" opacity=".9"/>
+              <rect x="11" y="0" width="2.5" height="26" fill="#F9A03F" opacity=".7"/>
+              <rect x="0" y="11" width="26" height="2.5" fill="#F9A03F" opacity=".7"/>
+            </pattern>
+          </defs>
+
+          <!-- ground shadow -->
+          <ellipse cx="200" cy="452" rx="120" ry="16" fill="#000" opacity=".25"/>
+
+          <!-- toot puff (behind badge) -->
+          <g id="tootPuff" opacity="0">
+            <ellipse cx="120" cy="420" rx="30" ry="20" fill="#bfe6bf" opacity=".8"/>
+            <ellipse cx="160" cy="438" rx="24" ry="16" fill="#a9dca9" opacity=".7"/>
+            <ellipse cx="90"  cy="440" rx="20" ry="14" fill="#cdeccd" opacity=".6"/>
+          </g>
+
+          <!-- wee dookie -->
+          <g id="dookie" opacity="0">
+            <ellipse cx="200" cy="452" rx="26" ry="9" fill="#3a260f" opacity=".5"/>
+            <path d="M180 448 q6-16 20-16 q14 0 20 16 q-8 6-20 6 q-12 0-20-6 Z" fill="#5a3a15"/>
+            <path d="M186 438 q4-13 14-13 q10 0 14 13 q-7 5-14 5 q-7 0-14-5 Z" fill="#6b4519"/>
+            <path d="M192 430 q3-10 8-10 q5 0 8 10 q-5 4-8 4 q-3 0-8-4 Z" fill="#7c521f"/>
+            <circle cx="196" cy="428" r="2" fill="#fff" opacity=".8"/>
+          </g>
+
+          <g id="macWrap">
+            <!-- badge -->
+            <circle cx="200" cy="215" r="178" fill="url(#badge)" stroke="#160f08" stroke-width="8"/>
+            <circle cx="200" cy="215" r="178" fill="none" stroke="#fff" stroke-width="2" opacity=".15"/>
+
+            <!-- shoulders / jacket -->
+            <g>
+              <path d="M70 392 q10-70 130-70 q120 0 130 70 v40 H70 Z" fill="#1B3A6B" stroke="#160f08" stroke-width="6"/>
+              <!-- tartan sash -->
+              <path d="M132 322 L250 400 L214 400 L108 336 Z" fill="url(#tartan)" stroke="#160f08" stroke-width="4"/>
+              <!-- brooch (clickable) -->
+              <g id="brooch">
+                <circle cx="138" cy="336" r="18" fill="#cfd6e0" stroke="#160f08" stroke-width="4"/>
+                <circle cx="138" cy="336" r="8" fill="#2E86C1"/>
+                <circle cx="134" cy="332" r="2.5" fill="#fff" opacity=".8"/>
+              </g>
+            </g>
+
+            <!-- neck -->
+            <rect x="176" y="292" width="48" height="42" rx="14" fill="#f1cfa0" stroke="#160f08" stroke-width="5"/>
+
+            <!-- ears -->
+            <ellipse cx="112" cy="196" rx="17" ry="24" fill="#f6d9ad" stroke="#160f08" stroke-width="5"/>
+            <ellipse cx="288" cy="196" rx="17" ry="24" fill="#f6d9ad" stroke="#160f08" stroke-width="5"/>
+
+            <!-- beard (clickable) -->
+            <g id="beard">
+              <path d="M112 168 q-16 92 40 150 q28 26 48 26 q20 0 48-26 q56-58 40-150 q-40 26-88 26 q-48 0-88-26 Z"
+                    fill="#E86A1A" stroke="#160f08" stroke-width="6"/>
+              <path d="M120 176 q-6 70 36 118" fill="none" stroke="#C24E12" stroke-width="4" opacity=".5"/>
+              <path d="M280 176 q6 70 -36 118" fill="none" stroke="#C24E12" stroke-width="4" opacity=".5"/>
+            </g>
+
+            <!-- face skin -->
+            <ellipse cx="200" cy="168" rx="86" ry="80" fill="#f6d9ad" stroke="#160f08" stroke-width="6"/>
+
+            <!-- cheeks -->
+            <circle id="cheekL" cx="150" cy="196" r="18" fill="#f4a15e" opacity=".7"/>
+            <circle id="cheekR" cx="250" cy="196" r="18" fill="#f4a15e" opacity=".7"/>
+
+            <!-- eyebrows -->
+            <path d="M138 138 q22-14 46-4" fill="none" stroke="#C24E12" stroke-width="9" stroke-linecap="round"/>
+            <path d="M262 138 q-22-14 -46-4" fill="none" stroke="#C24E12" stroke-width="9" stroke-linecap="round"/>
+
+            <!-- eyes: open -->
+            <g id="eyesOpen">
+              <ellipse cx="167" cy="164" rx="17" ry="20" fill="#fff" stroke="#160f08" stroke-width="4"/>
+              <ellipse cx="233" cy="164" rx="17" ry="20" fill="#fff" stroke="#160f08" stroke-width="4"/>
+              <circle cx="171" cy="167" r="7.5" fill="#160f08"/>
+              <circle cx="229" cy="167" r="7.5" fill="#160f08"/>
+              <circle cx="173" cy="164" r="2.4" fill="#fff"/>
+              <circle cx="231" cy="164" r="2.4" fill="#fff"/>
+            </g>
+            <!-- eyes: strain (hidden) -->
+            <g id="eyesStrain" style="display:none">
+              <path d="M150 164 q17-14 34 0" fill="none" stroke="#160f08" stroke-width="5" stroke-linecap="round"/>
+              <path d="M216 164 q17-14 34 0" fill="none" stroke="#160f08" stroke-width="5" stroke-linecap="round"/>
+            </g>
+
+            <!-- nose -->
+            <path d="M200 168 q-12 22 -2 30 q4 4 10 0 q10-8 -2-30 Z" fill="#eab97f" stroke="#160f08" stroke-width="4"/>
+
+            <!-- mustache -->
+            <path d="M200 214 q-26 4 -40 -8 q18 22 40 16 q22 6 40-16 q-14 12 -40 8 Z" fill="#E86A1A" stroke="#160f08" stroke-width="4"/>
+
+            <!-- mouth -->
+            <path id="mouth" d="M178 226 q22 20 44 0" fill="#7a1f10" stroke="#160f08" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- TAM (clickable) -->
+            <g id="tam" style="transform-origin:200px 108px;">
+              <!-- ribbon tail -->
+              <path d="M296 96 q28 6 30 40 q-16-6 -22-18 q-4 20 -14 22 q4-24 6-44 Z" fill="#234f8a" stroke="#160f08" stroke-width="4"/>
+              <!-- cap body -->
+              <ellipse cx="200" cy="104" rx="128" ry="60" fill="#1B3A6B" stroke="#160f08" stroke-width="7"/>
+              <!-- tartan band -->
+              <path d="M80 118 q120 44 240 0 l0 18 q-120 44 -240 0 Z" fill="url(#tartan)" stroke="#160f08" stroke-width="5"/>
+              <!-- top dome -->
+              <ellipse cx="200" cy="86" rx="96" ry="42" fill="#234f8a" stroke="#160f08" stroke-width="6"/>
+              <!-- toorie / pom -->
+              <circle cx="200" cy="52" r="16" fill="#F26722" stroke="#160f08" stroke-width="5"/>
+              <circle cx="195" cy="47" r="4" fill="#F9A03F"/>
+            </g>
+          </g>
+        </svg>
+      </button>
+
+      <div class="say" id="say">"Aye, poke away, laddie."</div>
+    </div>
+
+    <div class="hint">Click MAC. He cannae always hold it in.</div>
+    <div class="whisper">There are a few secrets hidden aboot the place. Go pokin' around.</div>
+
+    <footer>A daft wee toy for McLennan's finest. No Highlanders were harmed.</footer>
+  </div>
+
+  <!-- hidden thistle easter egg -->
+  <svg id="thistle" viewBox="0 0 40 40" title="...">
+    <path d="M20 38 L20 20" stroke="#2E86C1" stroke-width="3"/>
+    <path d="M20 22 q-8 2 -12 -4 q6 0 12 4 M20 22 q8 2 12 -4 q-6 0 -12 4" fill="#4FB0F0"/>
+    <ellipse cx="20" cy="14" rx="8" ry="9" fill="#8a5fc0"/>
+    <path d="M13 8 q7-8 14 0" stroke="#F26722" stroke-width="3" fill="none"/>
+  </svg>
+
+  <div class="banner" id="banner"><div class="card" id="bannerText"></div></div>
+
+<script>
+/* ============================================================
+   FARTIN' MAC — synthesized sound + game logic + easter eggs
+   ============================================================ */
+
+/* ---------- OPTIONAL: use your own sound files ----------
+   By default MAC's farts are synthesized in the browser, so they
+   work offline and never repeat exactly. The Soundjay files are
+   hotlink-protected, so linking straight to them tends to break.
+   If you want to use your own .mp3s (drop them next to this file),
+   list them here and MAC will play those at random instead:      */
+const FART_SAMPLES = [
+  // "farts/fart-01.mp3", "farts/fart-02.mp3", "farts/fart-03.mp3"
+];
+let sampleBuffers = [];
+/* -------------------------------------------------------- */
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd = (a,b)=>a+Math.random()*(b-a);
+const pick = a=>a[Math.floor(Math.random()*a.length)];
+
+let muted = false;
+let AC = null;
+function ac(){
+  if(!AC){ AC = new (window.AudioContext||window.webkitAudioContext)(); loadSamples(); }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+async function loadSamples(){
+  if(!FART_SAMPLES.length || sampleBuffers.length) return;
+  for(const url of FART_SAMPLES){
+    try{
+      const res = await fetch(url);
+      const arr = await res.arrayBuffer();
+      sampleBuffers.push(await AC.decodeAudioData(arr));
+    }catch(e){ /* fall back to synth */ }
+  }
+}
+
+function noiseBuffer(ctx,dur){
+  const len=Math.max(1,Math.floor(ctx.sampleRate*dur));
+  const buf=ctx.createBuffer(1,len,ctx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+  return buf;
+}
+
+/* ---- the fart synth ---- */
+function synthFart(o={}){
+  const ctx=ac(); const t=ctx.currentTime;
+  const dur=o.dur??0.4, base=o.base??100, wobRate=o.wobRate??16, wobDepth=o.wobDepth??40;
+  const wet=o.wet??0.3, glide=o.glide??0, vol=o.vol??0.9;
+
+  const osc=ctx.createOscillator();
+  osc.type=o.wave||'sawtooth';
+  osc.frequency.setValueAtTime(base,t);
+  if(glide) osc.frequency.exponentialRampToValueAtTime(Math.max(28,base+glide),t+dur);
+
+  const lfo=ctx.createOscillator();
+  lfo.type=o.lfoWave||'square';
+  lfo.frequency.setValueAtTime(wobRate,t);
+  const lfoGain=ctx.createGain(); lfoGain.gain.setValueAtTime(wobDepth,t);
+  lfo.connect(lfoGain).connect(osc.frequency);
+
+  const lp=ctx.createBiquadFilter(); lp.type='lowpass';
+  lp.frequency.setValueAtTime(Math.min(6000,base*8+300),t);
+
+  const amp=ctx.createGain(); amp.gain.setValueAtTime(0.0001,t);
+  const bursts=o.bursts||1;
+  if(bursts>1){
+    const seg=dur/bursts;
+    for(let i=0;i<bursts;i++){
+      const s=t+i*seg;
+      amp.gain.setValueAtTime(0.0001,s);
+      amp.gain.exponentialRampToValueAtTime(vol, s+seg*0.15);
+      amp.gain.exponentialRampToValueAtTime(0.0001, s+seg*0.92);
+    }
+  }else{
+    amp.gain.exponentialRampToValueAtTime(vol,t+0.02);
+    amp.gain.setValueAtTime(vol*0.8,t+dur*0.6);
+    amp.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  }
+
+  osc.connect(lp).connect(amp).connect(ctx.destination);
+
+  if(wet>0){
+    const nb=ctx.createBufferSource(); nb.buffer=noiseBuffer(ctx,dur);
+    const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.setValueAtTime(base*2+200,t); bp.Q.value=0.7;
+    const ng=ctx.createGain(); ng.gain.setValueAtTime(0.0001,t);
+    ng.gain.exponentialRampToValueAtTime(wet*vol,t+0.02);
+    ng.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    nb.connect(bp).connect(ng).connect(ctx.destination);
+    nb.start(t); nb.stop(t+dur);
+  }
+
+  osc.start(t); osc.stop(t+dur+0.05);
+  lfo.start(t); lfo.stop(t+dur+0.05);
+}
+
+/* fart "families" — a different flavour each poke */
+const FAMILIES=[
+  ()=>({base:rnd(150,260),dur:rnd(.12,.30),wobRate:rnd(20,34),wobDepth:rnd(30,60),wet:rnd(.05,.2),vol:.8}),   // squeaker
+  ()=>({base:rnd(55,85),dur:rnd(.6,1.05),wobRate:rnd(9,16),wobDepth:rnd(30,55),wet:rnd(.25,.45),vol:1}),      // rumbler
+  ()=>({base:rnd(95,140),dur:rnd(.45,.75),wobRate:rnd(14,22),wobDepth:rnd(25,45),wet:rnd(.15,.3),bursts:Math.floor(rnd(3,7))}), // sputter
+  ()=>({base:rnd(80,120),dur:rnd(.35,.6),wobRate:rnd(10,16),wobDepth:rnd(20,40),wet:rnd(.5,.8),vol:.95}),     // wet one
+  ()=>({base:rnd(160,220),dur:rnd(.5,.85),wobRate:rnd(12,18),wobDepth:rnd(30,50),wet:rnd(.1,.25),glide:-120}),// trumpet deflate
+  ()=>({base:rnd(110,150),dur:rnd(.4,.7),wobRate:rnd(24,36),wobDepth:rnd(40,70),wet:rnd(.15,.3),lfoWave:'sine'}), // brassy
+];
+
+function playFart(){
+  if(muted) return;
+  const ctx=ac();
+  if(sampleBuffers.length){
+    const src=ctx.createBufferSource();
+    src.buffer=pick(sampleBuffers);
+    src.playbackRate.value=rnd(0.85,1.2);
+    const g=ctx.createGain(); g.gain.value=0.9;
+    src.connect(g).connect(ctx.destination); src.start();
+    return;
+  }
+  let opts=pick(FAMILIES)();
+  if(haggisCharged){ opts.base*=0.6; opts.dur*=2.2; opts.vol=1; opts.wet=Math.min(.9,(opts.wet||.3)+.2); opts.wobDepth=70; }
+  if(hasteUntil>Date.now()){ opts=FAMILIES[0](); opts.base=rnd(220,320); }
+  synthFart(opts);
+}
+
+function playDookie(){
+  if(muted) return;
+  synthFart({base:130,dur:.75,wobRate:10,wobDepth:38,wet:.45,glide:-95,vol:1});
+  const ctx=ac();
+  plop(ctx, ctx.currentTime+0.78, 200);
+  plop(ctx, ctx.currentTime+0.98, 150);
+}
+function plop(ctx,t,f){
+  const o=ctx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(f,t); o.frequency.exponentialRampToValueAtTime(f*0.4,t+0.12);
+  const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.9,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.18);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+0.2);
+  const nb=ctx.createBufferSource(); nb.buffer=noiseBuffer(ctx,0.15);
+  const bp=ctx.createBiquadFilter(); bp.type='highpass'; bp.frequency.value=1200;
+  const ng=ctx.createGain(); ng.gain.setValueAtTime(0.4,t); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.15);
+  nb.connect(bp).connect(ng).connect(ctx.destination); nb.start(t); nb.stop(t+0.15);
+}
+
+function playMega(){
+  if(muted) return;
+  synthFart({base:60,dur:1.7,wobRate:11,wobDepth:60,wet:.5,glide:-25,vol:1});
+  synthFart({base:150,dur:1.7,wobRate:8,wobDepth:50,wet:.3,glide:-110,vol:.6,wave:'square'});
+}
+
+function playBoing(){
+  if(muted) return;
+  const ctx=ac(); const t=ctx.currentTime;
+  const o=ctx.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(620,t); o.frequency.exponentialRampToValueAtTime(120,t+0.35);
+  const lfo=ctx.createOscillator(); lfo.frequency.value=18; const lg=ctx.createGain(); lg.gain.value=45;
+  lfo.connect(lg).connect(o.frequency); lfo.start(t); lfo.stop(t+0.4);
+  const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.55,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+0.42);
+}
+
+function playBagpipes(){
+  if(muted) return;
+  const ctx=ac(); const t=ctx.currentTime; const dur=2.6;
+  const master=ctx.createGain(); master.gain.setValueAtTime(0.0001,t);
+  master.gain.exponentialRampToValueAtTime(0.22,t+0.25);
+  master.gain.setValueAtTime(0.22,t+dur-0.5); master.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=900; bp.Q.value=1.1;
+  bp.connect(master).connect(ctx.destination);
+  [110,110.7,164.8,220].forEach((f,i)=>{
+    const o=ctx.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+    const g=ctx.createGain(); g.gain.value=0.3;
+    const v=ctx.createOscillator(); v.frequency.value=5+i*0.35; const vg=ctx.createGain(); vg.gain.value=2.5;
+    v.connect(vg).connect(o.frequency); v.start(t); v.stop(t+dur);
+    o.connect(g).connect(bp); o.start(t); o.stop(t+dur);
+  });
+  const mel=ctx.createOscillator(); mel.type='sawtooth';
+  const notes=[440,494,440,392,440,523,494,440];
+  notes.forEach((n,i)=>mel.frequency.setValueAtTime(n,t+i*(dur/notes.length)));
+  const mg=ctx.createGain(); mg.gain.setValueAtTime(0.11,t);
+  mg.gain.setValueAtTime(0.11,t+dur-0.3); mg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  mel.connect(mg).connect(bp); mel.start(t); mel.stop(t+dur);
+}
+
+/* ---------- game state ---------- */
+let farts=0, best=0;
+let combo=0, comboTimer=null;
+let haggisCharged=false;
+let hasteUntil=0;
+let frenzyActive=false;
+
+const $ = s=>document.querySelector(s);
+const countEl=$('#count'), bestEl=$('#best'), sayEl=$('#say');
+const macWrap=$('#macWrap'), macBtn=$('#macBtn'), stage=document.querySelector('.stage'), wrap=$('#wrap');
+const comboBar=$('#comboBar'), comboFill=$('#comboFill'), comboLabel=$('#comboLabel');
+
+const POPS=["BRAAAP!","PFFFT!","TOOT!","PARP!","BLOORP!","FRRRT!","THPPT!","SQUEEEK!","POOT!","BRRT!"];
+const WET_POPS=["SPLBBBT!","SQUELCH!","SPLORT!"];
+const LINES=["\"Pardon me, laddie.\"","\"'Twas the haggis.\"","\"Better oot than in!\"","\"Och, a ripe one.\"",
+  "\"Nae shame in a good honk.\"","\"That'll clear the glen.\"","\"Whoops.\"","\"Aye, felt that comin'.\"",
+  "\"Excuse ye? Excuse ME.\"","\"Wind's pickin' up.\""];
+
+function updateCount(){
+  countEl.textContent=farts;
+  countEl.classList.remove('bump'); void countEl.offsetWidth; countEl.classList.add('bump');
+  if(farts>best){ best=farts; bestEl.textContent="Best streak: "+best; }
+}
+
+function say(txt){
+  sayEl.textContent=txt;
+  sayEl.classList.remove('pulse'); void sayEl.offsetWidth; sayEl.classList.add('pulse');
+}
+
+function spawnPop(text){
+  const p=document.createElement('div');
+  p.className='pop'; p.textContent=text;
+  const rect=stage.getBoundingClientRect();
+  const x=rnd(rect.width*0.28,rect.width*0.72);
+  p.style.left=x+'px'; p.style.top=(rect.height*0.62)+'px';
+  p.style.setProperty('--r', rnd(-14,14)+'deg');
+  p.style.fontSize=rnd(1.6,2.8)+'rem';
+  stage.appendChild(p);
+  setTimeout(()=>p.remove(),1000);
+}
+
+function puff(){
+  const g=$('#tootPuff'); if(!g) return;
+  g.style.transition='none'; g.style.opacity='1';
+  g.animate(
+    [{opacity:0.9,transform:'translateY(0) scale(.6)'},
+     {opacity:0,transform:'translateY(30px) scale(1.5)'}],
+    {duration:700, easing:'ease-out'}
+  );
+  setTimeout(()=>{g.style.opacity='0';},650);
+}
+
+function squash(){
+  if(reduceMotion) return;
+  macWrap.classList.add('squash');
+  setTimeout(()=>{macWrap.classList.remove('squash'); macWrap.classList.add('stretch');
+    setTimeout(()=>macWrap.classList.remove('stretch'),80);},70);
+}
+
+function bumpCombo(){
+  combo++;
+  clearTimeout(comboTimer);
+  comboTimer=setTimeout(()=>{combo=0; renderCombo();},800);
+  renderCombo();
+  if(combo>=15 && !frenzyActive) startFrenzy();
+}
+function renderCombo(){
+  const pct=Math.min(100,(combo/15)*100);
+  comboFill.style.width=pct+'%';
+  comboBar.classList.toggle('on',combo>1);
+  if(combo>=5 && combo<15){ comboLabel.textContent="Combo x"+combo+"!"; comboLabel.classList.add('on'); }
+  else if(combo<5){ comboLabel.classList.remove('on'); }
+}
+
+/* ---------- core: poke MAC ---------- */
+function pokeMac(){
+  ac();
+  const wet = Math.random()<0.22;
+  playFart();
+  farts++;
+  updateCount();
+  squash(); puff();
+  spawnPop(wet ? pick(WET_POPS) : pick(POPS));
+  bumpCombo();
+  if(Math.random()<0.16) say(pick(LINES));
+
+  if(haggisCharged){ haggisCharged=false; deflateBelly(); say("\"AH. Much better.\""); }
+
+  // random wee dookie on poke (not mid-frenzy, that'd be cruel)
+  if(!frenzyActive && farts>0 && Math.random()<0.045){ weeDookie(); }
+}
+
+function inflateBelly(){
+  const w=macWrap;
+  w.animate([{transform:'scale(1)'},{transform:'scale(1.08)'}],{duration:400,fill:'forwards',easing:'ease-out'});
+}
+function deflateBelly(){
+  macWrap.getAnimations().forEach(a=>a.cancel());
+  macWrap.style.transform='';
+}
+
+function setStrain(on){
+  $('#eyesOpen').style.display = on ? 'none':'block';
+  $('#eyesStrain').style.display = on ? 'block':'none';
+  $('#mouth').setAttribute('d', on ? 'M182 232 q18 -12 36 0' : 'M178 226 q22 20 44 0');
+}
+
+/* ---------- WEE DOOKIE (the reset) ---------- */
+function weeDookie(){
+  playDookie();
+  setStrain(true);
+  if(!reduceMotion){ wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake'); }
+
+  const d=$('#dookie');
+  d.style.opacity='1';
+  d.animate(
+    [{transform:'translateY(-40px) scale(.3)',opacity:0},
+     {transform:'translateY(0) scale(1)',opacity:1,offset:.7},
+     {transform:'translateY(0) scale(1)',opacity:1}],
+    {duration:600,easing:'cubic-bezier(.3,1.5,.4,1)',fill:'forwards'}
+  );
+
+  showBanner("OCH! A WEE DOOKIE!", "Counter reset. Best streak stays. Try again, laddie.");
+
+  const lost=farts;
+  farts=0;
+  setTimeout(()=>{
+    updateCount();
+    if(bestEl) bestEl.textContent="Best streak: "+best+(lost?"  (ye lost "+lost+")":"");
+    setStrain(false);
+    setTimeout(()=>{ d.style.opacity='0'; },1400);
+  },500);
+}
+
+/* ---------- banner ---------- */
+const banner=$('#banner'), bannerText=$('#bannerText');
+let bannerTimer=null;
+function showBanner(main, sub){
+  bannerText.innerHTML = main + (sub? '<small>'+sub+'</small>' : '');
+  banner.classList.add('show');
+  clearTimeout(bannerTimer);
+  bannerTimer=setTimeout(()=>banner.classList.remove('show'),1700);
+}
+
+/* ---------- FART FRENZY (combo easter egg) ---------- */
+function startFrenzy(){
+  frenzyActive=true;
+  document.body.classList.add('frenzy');
+  showBanner("FART FRENZY!", "Full auto. Hold onto yer kilt.");
+  let n=0;
+  const iv=setInterval(()=>{
+    playFart(); farts++; updateCount(); puff();
+    spawnPop(pick(POPS));
+    n++;
+    if(n>=18){ clearInterval(iv); frenzyActive=false; document.body.classList.remove('frenzy'); }
+  }, 110);
+}
+
+/* ---------- DISCO MAC (konami easter egg) ---------- */
+function toggleDisco(){
+  const on=document.body.classList.toggle('disco');
+  if(on){ showBanner("DISCO MAC!", "The Highland rave has begun."); playMega(); say("\"FREEEEDOM... to boogie!\""); }
+  else { say("\"Rave's over. Back tae business.\""); }
+}
+
+/* ---------- HAGGIS power-up (type h-a-g-g-i-s) ---------- */
+function chargeHaggis(){
+  if(haggisCharged) return;
+  haggisCharged=true;
+  inflateBelly();
+  showBanner("MAC ATE THE HAGGIS", "Next fart is a MONSTER. Poke wisely.");
+  say("\"Mmm. That'll fuel somethin' fierce.\"");
+}
+
+/* ---------- THISTLE haste (hidden corner) ---------- */
+function thistleHaste(){
+  hasteUntil=Date.now()+15000;
+  showBanner("YE FOUND THE THISTLE", "Squeaky-fart haste for 15 seconds.");
+  say("\"Ooh, prickly. And speedy.\"");
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+macBtn.addEventListener('click', pokeMac);
+
+$('#tam').addEventListener('click', e=>{
+  e.stopPropagation();
+  playBoing();
+  if(!reduceMotion){
+    $('#tam').animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:600,easing:'ease-in-out'});
+  }
+  if(Math.random()<0.5){ farts*=2; updateCount(); say("\"Lucky spin! Double honks!\""); }
+  else say("\"Weeee, ma bonnet!\"");
+});
+
+$('#brooch').addEventListener('click', e=>{
+  e.stopPropagation();
+  playBagpipes();
+  showBanner("🎵 BAGPIPES 🎵","A haunting drone fills the air.");
+});
+
+$('#beard').addEventListener('click', e=>{
+  e.stopPropagation();
+  if(muted){ return; }
+  const ctx=ac(); const t=ctx.currentTime;
+  const o=ctx.createOscillator(); o.type='triangle';
+  o.frequency.setValueAtTime(700,t); o.frequency.exponentialRampToValueAtTime(1300,t+0.12);
+  const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.4,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.15);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+0.16);
+  say("\"OI! Hands off the beard!\"");
+});
+
+$('#thistle').addEventListener('click', thistleHaste);
+
+$('#muteBtn').addEventListener('click', ()=>{
+  muted=!muted;
+  const b=$('#muteBtn');
+  b.textContent = muted ? "🔇 Sound: Off" : "🔊 Sound: On";
+  b.setAttribute('aria-pressed', String(muted));
+});
+
+/* keyboard: space / enter poke MAC when focused (button already does this,
+   but we also let the whole doc use "F" to fart for fun) */
+document.addEventListener('keydown', e=>{
+  if(e.key==='f' || e.key==='F'){ if(document.activeElement!==$('#muteBtn')) pokeMac(); }
+});
+
+/* Konami code */
+const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let kIdx=0;
+document.addEventListener('keydown', e=>{
+  const k = e.key.length===1 ? e.key.toLowerCase() : e.key;
+  if(k===KONAMI[kIdx]){ kIdx++; if(kIdx===KONAMI.length){ kIdx=0; toggleDisco(); } }
+  else { kIdx = (k===KONAMI[0]) ? 1 : 0; }
+});
+
+/* typed word "haggis" */
+let typed='';
+document.addEventListener('keydown', e=>{
+  if(e.key.length!==1) return;
+  typed=(typed+e.key.toLowerCase()).slice(-8);
+  if(typed.endsWith('haggis')) chargeHaggis();
+  if(typed.endsWith('freedom')){ showBanner("FREEEEDOM!","Braveheart approves."); playMega(); }
+});
+
+/* spontaneous wee dookie — every random moment */
+function scheduleSpontaneous(){
+  const wait = rnd(9000, 22000);
+  setTimeout(()=>{
+    if(!frenzyActive && farts>=3 && Math.random()<0.5 && document.visibilityState==='visible'){
+      say("\"Uh oh... here she comes...\"");
+      setTimeout(weeDookie, 900);
+    }
+    scheduleSpontaneous();
+  }, wait);
+}
+scheduleSpontaneous();
+
+/* first render */
+updateCount();
+</script>
+</body>
+</html>
