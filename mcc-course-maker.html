@@ -157,7 +157,44 @@
     color:#4a5b68;font-size:.9rem;margin-top:1rem;
   }
 
-  /* ============ TOAST ============ */
+  /* ============ TEMPLATES VIEW ============ */
+  .tpl-intro{max-width:880px;margin:0 auto 1.4rem;}
+  .tpl-intro h2{color:var(--mcc-navy);font-size:1.5rem;}
+  .tpl-intro h2::after{content:"";display:block;width:64px;height:4px;background:var(--mcc-orange);border-radius:2px;margin:.35rem 0 .8rem;}
+  .tpl-intro p{font-size:.93rem;color:#26333e;}
+  .tpl-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:1.1rem;max-width:1100px;margin:0 auto;
+  }
+  .tpl-card{
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    display:flex;flex-direction:column;overflow:hidden;
+    transition:box-shadow .15s, transform .15s;
+  }
+  .tpl-card:hover{box-shadow:0 8px 24px rgba(0,27,59,.14);transform:translateY(-2px);}
+  .tpl-card .thumb{
+    background:linear-gradient(105deg,var(--mcc-navy),var(--mcc-deep));
+    border-bottom:4px solid var(--mcc-orange);
+    padding:1.1rem 1.2rem;color:#fff;
+  }
+  .tpl-card .thumb .tag{
+    font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--mcc-ice);font-weight:500;
+  }
+  .tpl-card .thumb h3{font-size:1.08rem;font-weight:700;margin-top:.15rem;}
+  .tpl-card .body{padding:1rem 1.2rem;flex:1;display:flex;flex-direction:column;gap:.7rem;}
+  .tpl-card .body p{font-size:.85rem;color:#3a4a57;flex:1;}
+  .tpl-card .body ul{
+    list-style:none;display:flex;flex-wrap:wrap;gap:.35rem;
+  }
+  .tpl-card .body ul li{
+    font-size:.7rem;font-weight:600;color:var(--mcc-navy);
+    background:var(--mcc-ice);border-radius:999px;padding:.18rem .6rem;
+  }
+  .tpl-card .cardactions{display:flex;gap:.5rem;padding:0 1.2rem 1.1rem;}
+  .tpl-card .cardactions .btn{flex:1;font-size:.8rem;padding:.5rem .6rem;}
+
+
   .toast{
     position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--mcc-deep);color:#fff;padding:.7rem 1.3rem;border-radius:8px;
@@ -203,6 +240,7 @@
   </div>
   <nav class="views" aria-label="Site sections">
     <button id="tabBuilder" aria-pressed="true" onclick="showView('builder')">Page Builder</button>
+    <button id="tabTemplates" aria-pressed="false" onclick="showView('templates')">Page Templates</button>
     <button id="tabGuide" aria-pressed="false" onclick="showView('guide')">How to Use</button>
   </nav>
 </header>
@@ -234,13 +272,28 @@
     </div>
   </section>
 
+  <!-- ==================== TEMPLATES VIEW ==================== -->
+  <section id="viewTemplates" class="hidden">
+    <div class="tpl-intro">
+      <h2>Page Templates</h2>
+      <p>Common page designs, pre-assembled and ready to use. Load a template into the Page Builder to customize it block by block, or copy the HTML straight to your clipboard and paste it into Brightspace. Every template starts with a banner and a Heading 1 and is built to MCC brand and WCAG 2.1 standards.</p>
+    </div>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </section>
+
   <!-- ==================== GUIDE VIEW ==================== -->
   <section id="viewGuide" class="hidden">
     <div class="guide">
       <h2>How to Use MCC Course Maker</h2>
       <p>Course Maker helps MCC faculty and staff build clean, accessible, brand-aligned content pages for D2L Brightspace with no coding required. Build your page here, copy the HTML, and paste it into your course.</p>
 
-      <h3>1. Build your page</h3>
+      <h3>1. Start from a template or a blank page</h3>
+      <ol>
+        <li>Open the <strong>Page Templates</strong> tab to browse seven pre-assembled pages: Blank Page, Content Page, Course AI Policy, Meet Your Instructor, Module Overview, Course Technology, and Textbooks and Materials.</li>
+        <li>Click <strong>Load in Builder</strong> to open a template in the Page Builder and customize it, or <strong>Copy HTML</strong> to grab the finished page as is.</li>
+      </ol>
+
+      <h3>2. Build your page</h3>
       <ol>
         <li>Every page starts with a banner and a Heading 1. Click the banner or heading text to replace it with your own.</li>
         <li>In the <strong>Building Blocks</strong> panel, click any block to add it to the bottom of your page.</li>
@@ -249,7 +302,7 @@
         <li>Click any text in the preview to edit it in place.</li>
       </ol>
 
-      <h3>2. Add your page to Brightspace</h3>
+      <h3>3. Add your page to Brightspace</h3>
       <ol>
         <li>Click <strong>Copy Page HTML</strong>. The full page code is copied to your clipboard.</li>
         <li>In your Brightspace course, go to <strong>Content</strong>, choose the module you want, then select <strong>New &gt; Create a File</strong>.</li>
@@ -261,7 +314,7 @@
         <strong>Why heading structure matters:</strong> headings are how screen reader users navigate a page. Keep one Heading 1 per page and step down in order (H2, then H3) without skipping levels, and never use a heading just to make text big or bold. Every block in this tool is built to WCAG 2.1 contrast requirements: normal text at 4.5:1 or better, large text at 3:1 or better.
       </div>
 
-      <h3>3. A few MCC-specific notes</h3>
+      <h3>4. A few MCC-specific notes</h3>
       <ul>
         <li>All colors come from the MCC brand palette. Orange is used only for accents and large text because MCC orange on white does not meet the 4.5:1 contrast ratio required for body text.</li>
         <li>Replace image placeholders with your own images and always write meaningful alt text.</li>
@@ -441,11 +494,232 @@ BLOCKS.forEach(b=>{
   blockList.appendChild(btn);
 });
 
+/* =====================================================
+   Page Templates.
+   Pre-assembled pages built from original MCC content.
+   Each part is a Brightspace-ready HTML string; parts
+   after the banner and H1 stay deletable in the builder.
+   ===================================================== */
+function tplBanner(kicker, title){
+  return `<div style="background:linear-gradient(105deg,${NAVY} 0%,${DEEP} 100%);border-radius:12px;border-bottom:6px solid ${ORANGE};padding:2.6em 1.8em;margin:0 0 0.4em;${FONT}"><p style="color:${ICE};font-size:0.8em;letter-spacing:0.18em;text-transform:uppercase;margin:0 0 0.4em;font-weight:500;" contenteditable="true">${kicker}</p><p style="color:#ffffff;font-size:2em;font-weight:700;margin:0;line-height:1.25;" contenteditable="true">${title}</p></div>`;
+}
+function tplH1(text){
+  return `<h1 style="${FONT}color:${NAVY};font-size:1.9em;font-weight:800;margin:0.6em 0 0.2em;" contenteditable="true">${text}</h1>`;
+}
+function tplH2(text){
+  return `<h2 style="${FONT}color:${NAVY};font-size:1.6em;font-weight:700;margin:1.2em 0 0.3em;border-bottom:4px solid ${ORANGE};display:inline-block;padding-bottom:0.15em;" contenteditable="true">${text}</h2>`;
+}
+function tplP(text){
+  return `<p style="${FONT}color:${INK};font-size:1em;line-height:1.7;margin:0.6em 0;" contenteditable="true">${text}</p>`;
+}
+function tplList(items){
+  return `<ul style="${FONT}color:${INK};line-height:1.8;margin:0.6em 0;padding-left:1.4em;" contenteditable="true">${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+}
+function tplInfo(text){
+  return `<div style="background:${ICE};border-left:6px solid ${TEAL};border-radius:0 8px 8px 0;padding:1em 1.2em;margin:1em 0;${FONT}"><p style="margin:0;color:#00293a;line-height:1.6;" contenteditable="true">${text}</p></div>`;
+}
+function tplImportant(text){
+  return `<div style="background:#FFF3E8;border-left:6px solid ${ORANGE};border-radius:0 8px 8px 0;padding:1em 1.2em;margin:1em 0;${FONT}"><p style="margin:0;color:#5b2e00;line-height:1.6;" contenteditable="true">${text}</p></div>`;
+}
+function tplTable(caption, headers, rows){
+  const th = headers.map(h=>`<th scope="col" style="background:${NAVY};color:#ffffff;text-align:left;padding:0.7em 0.9em;border:1px solid ${NAVY};" contenteditable="true">${h}</th>`).join('');
+  const tr = rows.map((r,i)=>`<tr>${r.map(c=>`<td style="padding:0.7em 0.9em;border:1px solid #C9D8E2;color:${INK};${i%2?`background:#F2F6F9;`:''}" contenteditable="true">${c}</td>`).join('')}</tr>`).join('');
+  return `<table style="width:100%;border-collapse:collapse;margin:1em 0;${FONT}font-size:0.95em;"><caption style="text-align:left;font-weight:600;color:${NAVY};padding-bottom:0.4em;" contenteditable="true">${caption}</caption><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`;
+}
+function tplAccordion(summary, body){
+  return `<details style="border:1px solid #C9D8E2;border-radius:8px;margin:0.6em 0;${FONT}overflow:hidden;"><summary style="background:${NAVY};color:#ffffff;padding:0.8em 1.1em;font-weight:600;cursor:pointer;list-style-position:inside;" contenteditable="true">${summary}</summary><div style="padding:1em 1.2em;color:${INK};line-height:1.7;background:#ffffff;" contenteditable="true">${body}</div></details>`;
+}
+function tplObjectives(intro, items){
+  return `<div style="background:#ffffff;border:2px solid ${NAVY};border-radius:10px;padding:1.1em 1.3em;margin:1em 0;${FONT}"><p style="margin:0 0 0.4em;color:${NAVY};font-weight:700;font-size:1.05em;" contenteditable="true">Learning Objectives</p><p style="margin:0 0 0.4em;color:${INK};" contenteditable="true">${intro}</p><ul style="margin:0;padding-left:1.3em;color:${INK};line-height:1.8;" contenteditable="true">${items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`;
+}
+function tplInstructorCard(){
+  return `<div style="display:flex;flex-wrap:wrap;gap:1.2em;align-items:center;background:#ffffff;border:1px solid #C9D8E2;border-top:6px solid ${GOLD};border-radius:10px;padding:1.2em 1.4em;margin:1em 0;${FONT}"><img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23D6E8EE'/%3E%3Ctext x='60' y='66' fill='%23003366' font-family='Arial' font-size='18' text-anchor='middle'%3EPhoto%3C/text%3E%3C/svg%3E" alt="REPLACE ALT TEXT: photo of the instructor" style="width:110px;height:110px;border-radius:50%;object-fit:cover;"><div style="flex:1 1 240px;"><p style="margin:0;color:${NAVY};font-size:1.15em;font-weight:700;" contenteditable="true">Instructor Name</p><p style="margin:0.15em 0 0.5em;color:${TEAL};font-weight:600;font-size:0.9em;" contenteditable="true">Title &middot; Department</p><p style="margin:0;color:${INK};line-height:1.6;font-size:0.95em;" contenteditable="true">Email: name@mclennan.edu &middot; Office: Building 000 &middot; Office hours: add days and times here.</p></div></div>`;
+}
+
+const TEMPLATES = [
+ {id:"blank", name:"Blank Page", tag:"Starter",
+  desc:"A clean starting point: banner and Heading 1 only. Build the rest yourself with building blocks.",
+  chips:["Banner","Heading 1"],
+  parts:()=>[ tplBanner("Course name &middot; Term","Welcome banner: click to edit"), tplH1("Page title (Heading 1)") ]},
+
+ {id:"content", name:"Content Page", tag:"Starter",
+  desc:"A general-purpose lesson or reading page with an introduction, two content sections, a helpful note, and a wrap-up.",
+  chips:["Intro","Sections","Callout","Conclusion"],
+  parts:()=>[
+    tplBanner("Course name &middot; Module","Content page title"),
+    tplH1("Topic title"),
+    tplP("Open with a short introduction that tells students what this page covers and why it matters for the module. Two or three sentences is plenty."),
+    tplH2("First main idea"),
+    tplP("Present your first concept here. Keep paragraphs short, define new terms when they first appear, and connect the idea back to the module objectives."),
+    tplH2("Second main idea"),
+    tplP("Continue with your next concept. If this section runs long, consider breaking it into its own page or using an accordion for optional detail."),
+    tplInfo("<strong>Tip:</strong> Add an example, a short video, or a practice question here to help students check their understanding before moving on."),
+    tplH2("Wrapping up"),
+    tplP("Close with a brief summary of the key takeaways and tell students exactly what to do next, such as the activity or assignment that follows this page.")
+  ]},
+
+ {id:"aipolicy", name:"Course AI Policy", tag:"Policy",
+  desc:"A clear, course-level policy for generative AI use: what is allowed, what is not, how to cite it, and where to ask.",
+  chips:["Permitted use","Prohibited use","Citing AI","Integrity"],
+  parts:()=>[
+    tplBanner("Course name &middot; Course policies","Artificial Intelligence Policy"),
+    tplH1("Generative AI in this course"),
+    tplP("This page explains how generative AI tools, such as chat assistants and image generators, may and may not be used in this course. When in doubt, ask before you submit. Edit this template to match your own course policy."),
+    tplImportant("<strong>The short version:</strong> AI use in this course is [permitted with disclosure / limited to specific assignments / not permitted]. Work you submit must represent your own understanding, and undisclosed AI use where disclosure is required is an academic integrity violation."),
+    tplH2("Permitted uses"),
+    tplList([
+      "Brainstorming topics and organizing your ideas",
+      "Checking grammar, clarity, and tone in your own drafts",
+      "Generating practice questions to study from",
+      "Explaining difficult concepts in a different way"
+    ]),
+    tplH2("Prohibited uses"),
+    tplList([
+      "Submitting AI-generated text, code, or images as your own work",
+      "Using AI during quizzes or exams unless the instructions say otherwise",
+      "Entering other students' work or personal information into AI tools",
+      "Fabricating sources or citations, whether or not AI produced them"
+    ]),
+    tplH2("Disclosing and citing AI use"),
+    tplP("When AI use is permitted and you use it, say so. Add a brief disclosure statement to your submission that names the tool, describes how you used it, and notes which parts of the work it influenced."),
+    tplAccordion("Example disclosure statement","I used [tool name] to brainstorm an outline for this essay and to check the grammar of my final draft. All arguments, analysis, and sources are my own, and I verified every claim independently."),
+    tplInfo("<strong>Why this policy exists:</strong> these tools can be genuinely useful, and they can also produce confident errors and invented sources. Learning to use them critically and honestly is part of being ready for the workplace."),
+    tplH2("Questions"),
+    tplP("If you are unsure whether a specific use is allowed on a specific assignment, ask before you submit. Contact me through the course email or during office hours.")
+  ]},
+
+ {id:"instructor", name:"Meet Your Instructor", tag:"Starter",
+  desc:"An instructor introduction with a contact card, a short bio, and clear communication expectations.",
+  chips:["Contact card","Bio","Communication"],
+  parts:()=>[
+    tplBanner("Course name &middot; Term","Meet your instructor"),
+    tplH1("Meet your instructor"),
+    tplInstructorCard(),
+    tplH2("About me"),
+    tplP("Introduce yourself in a couple of short paragraphs. Share your background in the field, what drew you to teaching this subject, and something human, like a hobby or a favorite place in Waco. Students engage more when they know there is a real person on the other side of the course."),
+    tplH2("How to reach me"),
+    tplP("Explain your preferred contact method and your response window, for example: email is the fastest way to reach me, and I reply within one business day on weekdays."),
+    tplInfo("<strong>Before you email:</strong> check the syllabus and the course FAQ first. If the answer is not there, send your question along with your course and section number.")
+  ]},
+
+ {id:"module", name:"Module Overview", tag:"Starter",
+  desc:"A module landing page with an introduction, learning objectives, an activity table with due dates, and a key reminder.",
+  chips:["Objectives","Activity table","Due dates"],
+  parts:()=>[
+    tplBanner("Course name &middot; Module 1","Module title goes here"),
+    tplH1("Module 1 overview"),
+    tplP("Introduce the module in two or three sentences. What is the big question this module answers, and how does it build on what students have already done?"),
+    tplObjectives("By the end of this module, you will be able to:",[
+      "Describe the first objective",
+      "Apply the second objective",
+      "Analyze the third objective"
+    ]),
+    tplH2("Activities in this module"),
+    tplTable("Module activities and due dates",
+      ["Activity","Type","Due date"],
+      [
+        ["Read: chapter or article title","Reading","Add date"],
+        ["Watch: lecture or video title","Video","Add date"],
+        ["Discussion: prompt title","Discussion","Add date"],
+        ["Assignment: assignment title","Assignment","Add date"]
+      ]),
+    tplImportant("<strong>Heads up:</strong> the assignment at the end of this module counts toward your project grade. Start early and bring questions to office hours."),
+    tplH2("What comes next"),
+    tplP("Preview the next module in a sentence or two so students can see how the pieces connect.")
+  ]},
+
+ {id:"tech", name:"Course Technology", tag:"Support",
+  desc:"A required-technology page listing the tools students need, what each is for, and where to get help.",
+  chips:["Tool table","Access","Help contacts"],
+  parts:()=>[
+    tplBanner("Course name &middot; Getting started","Technology for this course"),
+    tplH1("Course technology"),
+    tplP("This course uses the tools below. Set them up during the first week so technical problems never stand between you and a deadline."),
+    tplTable("Required tools, what they are for, and where to get help",
+      ["Tool","What you will use it for","Where to get help"],
+      [
+        ["D2L Brightspace","All course content, submissions, grades, and announcements","MCC Brightspace support"],
+        ["Add tool name","Describe what students do with it","Link the vendor or campus help page"],
+        ["Add tool name","Describe what students do with it","Link the vendor or campus help page"]
+      ]),
+    tplH2("Minimum requirements"),
+    tplList([
+      "Reliable internet access and a laptop or desktop computer",
+      "An up-to-date browser such as Chrome, Edge, or Firefox",
+      "Access to your MCC email, which is the official channel for course communication"
+    ]),
+    tplInfo("<strong>No reliable computer or internet at home?</strong> MCC has on-campus computer labs and support resources. Reach out early in the term and we will find an option that works.")
+  ]},
+
+ {id:"textbooks", name:"Textbooks and Materials", tag:"Support",
+  desc:"A materials page covering required and optional texts, how to get them, and cost-conscious alternatives.",
+  chips:["Required text","Optional items","Access options"],
+  parts:()=>[
+    tplBanner("Course name &middot; Getting started","Textbooks and materials"),
+    tplH1("Textbooks and materials"),
+    tplH2("Required"),
+    tplTable("Required textbooks and materials",
+      ["Item","Details","Where to get it"],
+      [
+        ["Textbook title","Author, edition, ISBN","Campus bookstore, publisher, or library options"],
+        ["Other required item","Describe the item and any version requirements","Where students can purchase or access it"]
+      ]),
+    tplH2("Optional"),
+    tplP("List any optional materials here and be honest about how optional they really are. If something is only helpful for students pursuing a particular topic, say so."),
+    tplInfo("<strong>Keeping costs down:</strong> check the MCC Library for reserve copies and e-book access before buying, and look into used and rental options. If cost is a barrier, contact me and we will work out a plan."),
+    tplImportant("<strong>Have your materials by:</strong> add a date here. The first reading assignment depends on them.")
+  ]}
+];
+
+/* ============ Template gallery ============ */
+const tplGrid = document.getElementById('tplGrid');
+TEMPLATES.forEach(t=>{
+  const card = document.createElement('article');
+  card.className = 'tpl-card';
+  card.innerHTML = `
+    <div class="thumb"><span class="tag">${t.tag}</span><h3>${t.name}</h3></div>
+    <div class="body">
+      <p>${t.desc}</p>
+      <ul>${t.chips.map(c=>`<li>${c}</li>`).join('')}</ul>
+    </div>
+    <div class="cardactions">
+      <button class="btn ghost" onclick="loadTemplate('${t.id}')">Load in Builder</button>
+      <button class="btn primary" onclick="copyTemplate('${t.id}')">Copy HTML</button>
+    </div>`;
+  tplGrid.appendChild(card);
+});
+
+function loadTemplate(id){
+  const t = TEMPLATES.find(x=>x.id===id);
+  if(preview.children.length > 2 && !confirm('Loading "' + t.name + '" replaces the current page in the builder. Continue?')) return;
+  preview.innerHTML = '';
+  t.parts().forEach((html,i)=>preview.appendChild(makeWrap(html, i<2)));
+  showView('builder');
+  toast(t.name + ' loaded in the builder');
+  window.scrollTo({top:0});
+}
+
+function copyTemplate(id){
+  const t = TEMPLATES.find(x=>x.id===id);
+  const parts = t.parts().map(p=>p.replace(/ contenteditable="true"/g,''));
+  const html =
+`<!-- ${t.name} template | Built with MCC Course Maker | McLennan Community College Instructional Design -->
+<div style="max-width:900px;margin:0 auto;padding:1em;${FONT}color:${INK};line-height:1.6;">
+${parts.join('\n')}
+</div>`;
+  const done = ()=>toast(t.name + ' HTML copied to clipboard');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(html).then(done).catch(()=>fallbackCopy(html, done));
+  } else fallbackCopy(html, done);
+}
+
 /* ============ Views + toast ============ */
 function showView(v){
   document.getElementById('viewBuilder').classList.toggle('hidden', v!=='builder');
+  document.getElementById('viewTemplates').classList.toggle('hidden', v!=='templates');
   document.getElementById('viewGuide').classList.toggle('hidden', v!=='guide');
   document.getElementById('tabBuilder').setAttribute('aria-pressed', v==='builder');
+  document.getElementById('tabTemplates').setAttribute('aria-pressed', v==='templates');
   document.getElementById('tabGuide').setAttribute('aria-pressed', v==='guide');
 }
 let toastTimer;
