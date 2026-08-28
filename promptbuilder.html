@@ -1,151 +1,864 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta
-    name="description"
-    content="Generative AI Prompt Builder - Builds prompts for general and image output"
->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Prompt Builder Studio</title>
-  <style>
-    :root{--bg:#f5f7ff;--card:#fff;--ink:#172033;--muted:#5d6780;--line:#dfe6f5;--primary:#3157d5;--primary2:#00a6a6;--accent:#ff8a3d;--soft:#eef3ff;--soft2:#e9fbfb;--soft3:#fff0e6;--shadow:0 18px 44px rgba(28,43,95,.14);--radius:20px;--font:"Segoe UI",Roboto,Arial,Helvetica,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,rgba(49,87,213,.18),transparent 28rem),radial-gradient(circle at top right,rgba(255,138,61,.18),transparent 26rem),linear-gradient(180deg,#fff 0,#f5f7ff 42%,#edf4ff 100%);color:var(--ink);font-family:var(--font);line-height:1.55}.app{max-width:1320px;margin:auto;padding:22px}.hero{background:linear-gradient(135deg,#3157d5,#00a6a6);color:#fff;border-radius:30px;padding:clamp(28px,5vw,56px);box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;right:-90px;top:-120px;width:330px;height:330px;border-radius:50%;background:rgba(255,255,255,.14)}.hero>*{position:relative;z-index:1}.eyebrow{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 12px;font-weight:800;margin-bottom:15px}h1{margin:0;font-size:clamp(2rem,5vw,4rem);line-height:1.03;letter-spacing:-.05em;max-width:900px}.hero p{font-size:clamp(1rem,1.7vw,1.22rem);max-width:860px;color:rgba(255,255,255,.93)}button,.btn{border:0;border-radius:12px;padding:.78rem 1rem;background:var(--primary);color:#fff;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 18px rgba(49,87,213,.22)}button:hover,.btn:hover{filter:brightness(.94);transform:translateY(-1px)}.btn.ghost{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);box-shadow:none}.secondary{background:#fff;color:var(--primary);border:1px solid rgba(49,87,213,.22);box-shadow:0 8px 18px rgba(31,45,92,.1)}.small{padding:.56rem .76rem;font-size:.85rem}.hero-actions,.row,.actions{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin-top:22px;background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:10;backdrop-filter:blur(10px)}.tab{background:transparent;color:var(--muted);box-shadow:none}.tab.active{background:var(--primary);color:#fff;box-shadow:0 8px 20px rgba(49,87,213,.22)}.panel{display:none;margin-top:22px}.panel.active{display:block}.grid{display:grid;grid-template-columns:minmax(330px,470px) minmax(0,1fr);gap:22px;align-items:start}.card,.box,.example{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.head{padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(49,87,213,.08),rgba(0,166,166,.06))}.head h2,.head h3{margin:0;font-size:1.15rem}.head p{margin:6px 0 0;color:var(--muted);font-size:.92rem}.body{padding:20px}.field{margin-bottom:16px}.label,label{display:block;font-size:.89rem;font-weight:850;margin-bottom:7px;color:#25314a}.hint{font-size:.82rem;color:var(--muted);margin:6px 0 0}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:.78rem .86rem;font:inherit}textarea{min-height:88px;resize:vertical}.output{min-height:420px;font-family:Consolas,"Courier New",monospace;font-size:.92rem;line-height:1.55;background:linear-gradient(#fff,#f9fbff)}input:focus,select:focus,textarea:focus,button:focus{outline:3px solid rgba(49,87,213,.22);outline-offset:2px;border-color:var(--primary)}.frameworks{display:grid;gap:10px}.framework{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:13px;border-radius:15px;border:1px solid var(--line);background:#fff;cursor:pointer}.framework:hover,.framework:has(input:checked){border-color:var(--primary);background:var(--soft)}.framework input{margin-top:4px;width:18px;height:18px;accent-color:var(--primary)}.framework strong{display:block}.framework span{display:block;color:var(--muted);font-size:.83rem}.section{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;margin-top:16px}.section h3{margin:0 0 12px;color:var(--primary);font-size:1rem}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.pills{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{border:1px solid #dbe4ff;background:#f3f6ff;border-radius:999px;padding:5px 9px;font-size:.75rem;font-weight:850}.checks{display:grid;gap:9px}.check{border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px 12px;display:flex;justify-content:space-between;gap:10px}.check strong{display:block;font-size:.87rem}.check span{display:block;color:var(--muted);font-size:.78rem}.badge{border-radius:999px;padding:4px 8px;font-size:.72rem;font-weight:900;white-space:nowrap}.good{background:#e9f8ef;color:#17613a}.warn{background:#fff6df;color:#8a4b00}.cards4,.examples,.instructions{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cards4{grid-template-columns:repeat(4,1fr)}.mini{padding:18px;border-radius:18px;border:1px solid var(--line);background:#fff;box-shadow:0 12px 28px rgba(31,45,92,.08)}.mini:nth-child(1){background:var(--soft)}.mini:nth-child(2){background:var(--soft2)}.mini:nth-child(3){background:#f4efff}.mini:nth-child(4){background:var(--soft3)}.mini h3,.box h2,.box h3,.example h3{margin-top:0;color:var(--primary)}pre{white-space:pre-wrap;background:#101a33;color:#f4f7ff;padding:14px;border-radius:14px;overflow:auto;font-family:Consolas,"Courier New",monospace;font-size:.85rem}.box{padding:20px}.callout{border-left:6px solid var(--accent);background:var(--soft3);padding:14px 16px;border-radius:14px;margin-top:14px}.footer{text-align:center;color:var(--muted);margin:28px 0 8px;font-size:.9rem}@media(max-width:1050px){.grid,.instructions{grid-template-columns:1fr}.cards4{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.app{padding:12px}.hero{border-radius:22px}.two,.cards4,.examples{grid-template-columns:1fr}.tabs{position:static}.tab{flex:1 1 100%}}
-  </style>
-</head>
-<body>
-<div class="app">
-  <header class="hero">
-    <div class="eyebrow">Prompt Builder Studio</div>
-    <h1>Build stronger AI prompts without wrestling the blank box.</h1>
-    <p>Choose a text or image framework, answer guided questions, and generate a copy-ready prompt for ChatGPT, Claude, Gemini, Ideogram, or another AI tool.</p>
-    <div class="hero-actions"><a class="btn ghost" href="#builder">Start building</a><button class="btn ghost" data-jump="instructions">How it works</button></div>
-  </header>
+<!-- MCC AI Prompt Builder Studio -->
+<!-- Wrapper: .mcc-pb -->
+<div class="mcc-pb">
+<style>
+  .mcc-pb {
+    --mcc-pb-blue: #003366;
+    --mcc-pb-navy: #001B3B;
+    --mcc-pb-orange: #FF6600;
+    --mcc-pb-teal: #008DA7;
+    --mcc-pb-gold: #F7B32B;
+    --mcc-pb-brightblue: #33A1FD;
+    --mcc-pb-softblue: #D6E8EE;
+    --mcc-pb-ink: #182936;
+    --mcc-pb-muted: #5A6872;
+    --mcc-pb-line: #C9D4DA;
+    --mcc-pb-surface: #FFFFFF;
+    --mcc-pb-canvas: #F4F8FA;
+    --mcc-pb-good-bg: #E5F5EB;
+    --mcc-pb-good-text: #0B4D2C;
+    --mcc-pb-warn-bg: #FFF4D6;
+    --mcc-pb-warn-text: #6B4B00;
+    font-family: Poppins, Arial, Helvetica, sans-serif;
+    color: var(--mcc-pb-ink);
+    line-height: 1.55;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .mcc-pb *, .mcc-pb *::before, .mcc-pb *::after { box-sizing: border-box; }
+  .mcc-pb__section + .mcc-pb__section { margin-top: 28px; }
+  .mcc-pb button,
+  .mcc-pb input,
+  .mcc-pb select,
+  .mcc-pb textarea { font: inherit; color: inherit; }
+  .mcc-pb button { cursor: pointer; }
+  .mcc-pb a { color: var(--mcc-pb-blue); }
+  .mcc-pb :focus-visible {
+    outline: 3px solid var(--mcc-pb-gold);
+    outline-offset: 2px;
+  }
 
-  <nav class="tabs" aria-label="Application tabs">
-    <button class="tab active" data-tab="builder">Builder</button>
-    <button class="tab" data-tab="examples">Examples</button>
-    <button class="tab" data-tab="instructions">Instructions</button>
-  </nav>
+  /* MCC Page Banner */
+  .mcc-pb__banner {
+    background: var(--mcc-pb-blue);
+    color: #FFFFFF;
+    border-radius: 12px;
+    border-bottom: 6px solid var(--mcc-pb-orange);
+    padding: clamp(24px, 4vw, 40px);
+  }
+  .mcc-pb__eyebrow {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.4);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .mcc-pb__banner h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    line-height: 1.15;
+    font-weight: 600;
+  }
+  .mcc-pb__banner p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 1.02rem;
+    color: rgba(255,255,255,.92);
+  }
 
-  <main id="builder">
-    <section class="panel active" id="panel-builder">
-      <div class="grid">
-        <form class="card" id="promptForm">
-          <div class="head"><h2>Prompt ingredients</h2><p>Pick a framework, then fill in only what you need.</p></div>
-          <div class="body">
-            <div class="field"><span class="label">Choose a framework</span>
-              <div class="frameworks">
-                <label class="framework"><input type="radio" name="framework" value="rtcf" checked><span><strong>R-T-C-F: Basic Text Prompt</strong><span>Role, Task, Context, Format. Best for everyday AI work.</span></span></label>
-                <label class="framework"><input type="radio" name="framework" value="costar"><span><strong>CO-STAR+: Advanced Text Prompt</strong><span>Context, Objective, Style, Tone, Audience, Response. Best for polished output.</span></span></label>
-                <label class="framework"><input type="radio" name="framework" value="sss"><span><strong>S-S-S + Size: Basic Image Prompt</strong><span>Subject, Setting, Style, Size. Fast prompts for image tools.</span></span></label>
-                <label class="framework"><input type="radio" name="framework" value="ssclcm"><span><strong>SSCL-CM: Advanced Image Prompt</strong><span>Subject, Setting, Camera, Lighting, Color/Style, Mood/Modifiers.</span></span></label>
-              </div>
-            </div>
+  /* Tabs */
+  .mcc-pb__tabs {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--mcc-pb-line);
+  }
+  .mcc-pb__tab {
+    border: 0;
+    background: transparent;
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--mcc-pb-muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+  }
+  .mcc-pb__tab:hover { color: var(--mcc-pb-blue); }
+  .mcc-pb__tab[aria-selected="true"] {
+    color: var(--mcc-pb-blue);
+    border-bottom-color: var(--mcc-pb-orange);
+  }
+  .mcc-pb__panel { display: none; padding-top: 24px; }
+  .mcc-pb__panel.is-active { display: block; }
 
-            <div class="two">
-              <div class="field"><label for="tool">AI tool</label><select id="tool"><option value="general">General AI tool</option><option value="chatgpt">ChatGPT</option><option value="claude">Claude</option><option value="gemini">Gemini</option><option value="ideogram">Ideogram</option></select></div>
-              <div class="field"><label for="outputMode">Output type</label><select id="outputMode"><option value="text">Text output</option><option value="image">Image prompt output</option></select></div>
-            </div>
+  /* Layout */
+  .mcc-pb__grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 460px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .mcc-pb__card {
+    background: var(--mcc-pb-surface);
+    border: 1px solid var(--mcc-pb-line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .mcc-pb__card-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--mcc-pb-line);
+    background: var(--mcc-pb-canvas);
+  }
+  .mcc-pb__card-head h2 { margin: 0; font-size: 1.1rem; color: var(--mcc-pb-navy); font-weight: 600; }
+  .mcc-pb__card-head p { margin: 6px 0 0; color: var(--mcc-pb-muted); font-size: 0.9rem; }
+  .mcc-pb__card-body { padding: 20px; }
 
-            <div id="textFields" class="section"><h3>Text prompt details</h3>
-              <div class="field" data-fw="rtcf costar"><label for="role">Role or persona</label><input id="role" type="text" placeholder="Act as an instructional designer and accessibility specialist"></div>
-              <div class="field" data-fw="rtcf"><label for="task">Task</label><textarea id="task" placeholder="What exactly should the AI do?"></textarea></div>
-              <div class="field" data-fw="rtcf costar"><label for="context">Context</label><textarea id="context" placeholder="Audience, situation, background, goals, source material, etc."></textarea></div>
-              <div class="field" data-fw="costar"><label for="objective">Objective</label><textarea id="objective" placeholder="What is the goal of the output?"></textarea></div>
-              <div class="two" data-fw="costar"><div class="field"><label for="style">Style</label><input id="style" type="text" placeholder="clear, practical, plain-language"></div><div class="field"><label for="tone">Tone</label><input id="tone" type="text" placeholder="warm, confident, direct"></div></div>
-              <div class="field" data-fw="costar"><label for="audience">Audience</label><input id="audience" type="text" placeholder="College faculty new to AI"></div>
-              <div class="field" data-fw="rtcf costar"><label for="format">Response format</label><textarea id="format" placeholder="Use headings, bullets, a table, word count, etc."></textarea></div>
-              <div class="field" data-fw="costar"><label for="constraints">Constraints, examples, or things to avoid</label><textarea id="constraints" placeholder="Avoid jargon. Include 3 examples. Keep it human."></textarea></div>
-            </div>
+  /* Framework picker (cards) */
+  .mcc-pb__field { margin-bottom: 16px; }
+  .mcc-pb__field-label,
+  .mcc-pb label {
+    display: block;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--mcc-pb-navy);
+  }
+  .mcc-pb__hint { margin: 5px 0 0; font-size: 0.8rem; color: var(--mcc-pb-muted); }
+  .mcc-pb__frameworks { display: grid; gap: 10px; }
+  .mcc-pb__framework {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--mcc-pb-line);
+    background: var(--mcc-pb-surface);
+    cursor: pointer;
+  }
+  .mcc-pb__framework:hover { border-color: var(--mcc-pb-teal); }
+  .mcc-pb__framework:has(input:checked) {
+    border-color: var(--mcc-pb-blue);
+    background: var(--mcc-pb-softblue);
+  }
+  .mcc-pb__framework input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--mcc-pb-blue); }
+  .mcc-pb__framework strong { display: block; color: var(--mcc-pb-navy); font-size: 0.96rem; }
+  .mcc-pb__framework span { display: block; color: var(--mcc-pb-muted); font-size: 0.82rem; margin-top: 2px; }
 
-            <div id="imageFields" class="section hidden"><h3>Image prompt details</h3>
-              <div class="field" data-fw="sss ssclcm"><label for="subject">Subject</label><textarea id="subject" placeholder="Main visual focus. Be specific."></textarea></div>
-              <div class="field" data-fw="sss ssclcm"><label for="setting">Setting or context</label><textarea id="setting" placeholder="Where is it? What is happening?"></textarea></div>
-              <div class="field" data-fw="sss"><label for="imageStyleBasic">Style</label><input id="imageStyleBasic" type="text" placeholder="clean flat vector illustration"></div>
-              <div class="two" data-fw="ssclcm"><div class="field"><label for="camera">Composition or camera</label><input id="camera" type="text" placeholder="wide shot, eye level, rule of thirds"></div><div class="field"><label for="lighting">Lighting</label><input id="lighting" type="text" placeholder="soft natural window light"></div></div>
-              <div class="two" data-fw="ssclcm"><div class="field"><label for="colorStyle">Color and style</label><input id="colorStyle" type="text" placeholder="blue and orange palette, editorial style"></div><div class="field"><label for="mood">Mood and modifiers</label><input id="mood" type="text" placeholder="optimistic, polished, no clutter"></div></div>
-              <div class="two"><div class="field"><label for="aspectRatio">Aspect ratio</label><select id="aspectRatio"><option>16:9 landscape</option><option>1:1 square</option><option>4:5 portrait</option><option>2:3 portrait</option><option>9:16 vertical</option><option>3:2 landscape</option></select></div><div class="field"><label for="textInImage">Text to render in image</label><input id="textInImage" type="text" placeholder='"Prompt Better"'></div></div>
-              <div class="field"><label for="avoid">Avoid or exclude</label><textarea id="avoid" placeholder="no blurry text, no extra fingers, no watermark"></textarea><p class="hint">For Ideogram, this can be pasted into the negative prompt field.</p></div>
-            </div>
+  .mcc-pb__two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mcc-pb input[type="text"],
+  .mcc-pb input[type="url"],
+  .mcc-pb select,
+  .mcc-pb textarea {
+    width: 100%;
+    border: 1px solid var(--mcc-pb-line);
+    border-radius: 8px;
+    background: #FFFFFF;
+    padding: 0.7rem 0.8rem;
+  }
+  .mcc-pb textarea { min-height: 84px; resize: vertical; }
+  .mcc-pb__subsection {
+    border: 1px solid var(--mcc-pb-line);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    background: var(--mcc-pb-canvas);
+  }
+  .mcc-pb__subsection h3 {
+    margin: 0 0 12px;
+    color: var(--mcc-pb-blue);
+    font-size: 0.98rem;
+    font-weight: 700;
+  }
+  .mcc-pb__is-hidden { display: none !important; }
 
-            <div class="section"><h3>Optional finishing touches</h3>
-              <div class="field"><label for="sourceContent">Source content to include</label><textarea id="sourceContent" placeholder="Paste draft text, notes, data, or image-editing instructions here."></textarea></div>
-              <div class="two"><div class="field"><label for="length">Desired length</label><input id="length" type="text" placeholder="250 words, 6 bullets, one page"></div><div class="field"><label for="iteration">Iteration request</label><input id="iteration" type="text" placeholder="Ask me 3 questions first if unclear."></div></div>
-            </div>
-          </div>
-        </form>
+  /* Output panel */
+  .mcc-pb__output-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .mcc-pb__status { font-size: 0.88rem; color: var(--mcc-pb-muted); font-weight: 600; }
+  .mcc-pb__btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mcc-pb__btn {
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 2px solid var(--mcc-pb-blue);
+    background: #FFFFFF;
+    color: var(--mcc-pb-blue);
+  }
+  .mcc-pb__btn:hover { background: var(--mcc-pb-softblue); }
+  .mcc-pb__btn--primary {
+    border-color: var(--mcc-pb-orange);
+    background: var(--mcc-pb-orange);
+    color: #FFFFFF;
+  }
+  .mcc-pb__btn--primary:hover { background: #D94F00; border-color: #D94F00; }
+  .mcc-pb__output {
+    width: 100%;
+    min-height: 320px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    background: var(--mcc-pb-canvas);
+    border: 1px solid var(--mcc-pb-line);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .mcc-pb__pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+  .mcc-pb__pill {
+    border: 1px solid var(--mcc-pb-line);
+    background: var(--mcc-pb-softblue);
+    color: var(--mcc-pb-navy);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .mcc-pb__checks { display: grid; gap: 8px; }
+  .mcc-pb__check {
+    border: 1px solid var(--mcc-pb-line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+    background: #FFFFFF;
+  }
+  .mcc-pb__check strong { display: block; font-size: 0.86rem; color: var(--mcc-pb-navy); }
+  .mcc-pb__check span { display: block; font-size: 0.78rem; color: var(--mcc-pb-muted); margin-top: 2px; }
+  .mcc-pb__badge {
+    flex-shrink: 0;
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .mcc-pb__badge--good { background: var(--mcc-pb-good-bg); color: var(--mcc-pb-good-text); }
+  .mcc-pb__badge--warn { background: var(--mcc-pb-warn-bg); color: var(--mcc-pb-warn-text); }
 
-        <aside class="card">
-          <div class="head"><h2>Your generated prompt</h2><p>Copy this into your AI tool, then refine one thing at a time.</p></div>
-          <div class="body">
-            <div class="actions" style="justify-content:space-between;margin-bottom:12px"><span id="status">Ready.</span><span class="row"><button type="button" class="secondary small" id="copyBtn">Copy prompt</button><button type="button" class="secondary small" id="downloadBtn">Download prompt</button><button type="button" class="small" id="resetBtn">Reset</button></span></div>
-            <textarea id="promptOutput" class="output" readonly></textarea>
-            <div class="pills" id="pills"></div>
-            <div class="checks" id="checks"></div>
-          </div>
-        </aside>
+  /* Callout */
+  .mcc-pb__callout {
+    border: 1px solid var(--mcc-pb-line);
+    border-left: 6px solid var(--mcc-pb-gold);
+    background: #FFF8E1;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-top: 18px;
+  }
+  .mcc-pb__callout strong { color: var(--mcc-pb-navy); }
+
+  /* Framework/example accordion */
+  .mcc-pb__accordion { border: 1px solid var(--mcc-pb-line); border-radius: 10px; margin: 0 0 10px; overflow: hidden; background: #FFFFFF; }
+  .mcc-pb__accordion > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 14px 16px;
+    font-weight: 700;
+    color: var(--mcc-pb-navy);
+    background: var(--mcc-pb-canvas);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .mcc-pb__accordion > summary::-webkit-details-marker { display: none; }
+  .mcc-pb__accordion > summary::after {
+    content: "+";
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--mcc-pb-blue);
+  }
+  .mcc-pb__accordion[open] > summary::after { content: "\2212"; }
+  .mcc-pb__accordion[open] > summary { border-bottom: 1px solid var(--mcc-pb-line); }
+  .mcc-pb__accordion-body { padding: 16px 18px; }
+  .mcc-pb__accordion-body p:first-child { margin-top: 0; }
+  .mcc-pb__example-code {
+    white-space: pre-wrap;
+    background: var(--mcc-pb-navy);
+    color: #EAF2F8;
+    padding: 14px;
+    border-radius: 8px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.84rem;
+    overflow-x: auto;
+    margin: 12px 0 0;
+  }
+
+  /* Instructions list */
+  .mcc-pb__ordered { margin: 0; padding-left: 22px; }
+  .mcc-pb__ordered li { margin-bottom: 8px; }
+
+  @media (max-width: 900px) {
+    .mcc-pb__grid { grid-template-columns: 1fr; }
+    .mcc-pb__two { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .mcc-pb__tab { flex: 1 1 100%; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mcc-pb *, .mcc-pb *::before, .mcc-pb *::after { transition: none !important; }
+  }
+</style>
+
+<!-- MCC Page Banner -->
+<header class="mcc-pb__banner">
+  <span class="mcc-pb__eyebrow">Prompt Builder Studio</span>
+  <h1>Build stronger AI prompts without wrestling the blank box</h1>
+  <p>Choose a prompting framework, answer a few guided questions, and generate a copy-ready prompt for ChatGPT, Claude, Gemini, Ideogram, or another AI tool.</p>
+</header>
+
+<!-- Application Tabs -->
+<nav class="mcc-pb__tabs" role="tablist" aria-label="AI Prompt Builder sections">
+  <button type="button" class="mcc-pb__tab" id="mccpb-tab-builder" role="tab" aria-selected="true" aria-controls="mccpb-panel-builder" data-mccpb-tab="builder">Builder</button>
+  <button type="button" class="mcc-pb__tab" id="mccpb-tab-examples" role="tab" aria-selected="false" aria-controls="mccpb-panel-examples" tabindex="-1" data-mccpb-tab="examples">Examples</button>
+  <button type="button" class="mcc-pb__tab" id="mccpb-tab-instructions" role="tab" aria-selected="false" aria-controls="mccpb-panel-instructions" tabindex="-1" data-mccpb-tab="instructions">Instructions</button>
+</nav>
+
+<!-- Builder Panel -->
+<section class="mcc-pb__panel is-active" id="mccpb-panel-builder" role="tabpanel" aria-labelledby="mccpb-tab-builder" tabindex="0">
+  <div class="mcc-pb__grid">
+
+    <!-- Prompt Ingredients Form -->
+    <form class="mcc-pb__card" id="mccpb-form">
+      <div class="mcc-pb__card-head">
+        <h2>Prompt ingredients</h2>
+        <p>Pick a framework, then fill in only what you need.</p>
       </div>
-    </section>
+      <div class="mcc-pb__card-body">
 
-    <section class="panel" id="panel-examples">
-      <div class="cards4"><div class="mini"><h3>R-T-C-F</h3><p>Fast text prompts for daily writing, summarizing, revising, and brainstorming.</p></div><div class="mini"><h3>CO-STAR+</h3><p>More control over audience, tone, style, structure, and constraints.</p></div><div class="mini"><h3>S-S-S + Size</h3><p>Simple image prompts that name subject, setting, style, and aspect ratio.</p></div><div class="mini"><h3>SSCL-CM</h3><p>Advanced image prompts with camera, lighting, color, mood, and modifiers.</p></div></div>
-      <div class="examples" style="margin-top:18px">
-        <article class="example"><div class="body"><h3>R-T-C-F example</h3><pre>Role: Act as a friendly instructional designer.
+        <fieldset class="mcc-pb__field" style="border:0;padding:0;margin:0 0 16px">
+          <legend class="mcc-pb__field-label">Choose a framework</legend>
+          <div class="mcc-pb__frameworks">
+            <label class="mcc-pb__framework">
+              <input type="radio" name="mccpb-framework" value="rtcf" checked>
+              <span><strong>R-T-C-F: Basic text prompt</strong><span>Role, Task, Context, Format. Best for everyday AI work.</span></span>
+            </label>
+            <label class="mcc-pb__framework">
+              <input type="radio" name="mccpb-framework" value="costar">
+              <span><strong>CO-STAR+: Advanced text prompt</strong><span>Context, Objective, Style, Tone, Audience, Response. Best for polished output.</span></span>
+            </label>
+            <label class="mcc-pb__framework">
+              <input type="radio" name="mccpb-framework" value="sss">
+              <span><strong>S-S-S + Size: Basic image prompt</strong><span>Subject, Setting, Style, Size. Fast prompts for image tools.</span></span>
+            </label>
+            <label class="mcc-pb__framework">
+              <input type="radio" name="mccpb-framework" value="ssclcm">
+              <span><strong>SSCL-CM: Advanced image prompt</strong><span>Subject, Setting, Camera, Lighting, Color/Style, Mood/Modifiers.</span></span>
+            </label>
+          </div>
+        </fieldset>
 
+        <div class="mcc-pb__two">
+          <div class="mcc-pb__field">
+            <label for="mccpb-tool">AI tool</label>
+            <select id="mccpb-tool">
+              <option value="general">General AI tool</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="claude">Claude</option>
+              <option value="gemini">Gemini</option>
+              <option value="ideogram">Ideogram</option>
+            </select>
+          </div>
+          <div class="mcc-pb__field">
+            <span class="mcc-pb__field-label" id="mccpb-output-type-label">Output type</span>
+            <p aria-describedby="mccpb-output-type-label" id="mccpb-output-type-value" style="margin:0;padding:0.7rem 0;font-weight:700;color:var(--mcc-pb-blue)">Text prompt</p>
+            <p class="mcc-pb__hint" style="margin-top:-4px">Set automatically by the framework you choose.</p>
+          </div>
+        </div>
+
+        <!-- Text Prompt Fields -->
+        <div id="mccpb-text-fields" class="mcc-pb__subsection">
+          <h3>Text prompt details</h3>
+          <div class="mcc-pb__field" data-mccpb-fw="rtcf costar">
+            <label for="mccpb-role">Role or persona</label>
+            <input id="mccpb-role" type="text" placeholder="Act as an instructional designer and accessibility specialist">
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="rtcf">
+            <label for="mccpb-task">Task</label>
+            <textarea id="mccpb-task" placeholder="What exactly should the AI do?"></textarea>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="rtcf costar">
+            <label for="mccpb-context">Context</label>
+            <textarea id="mccpb-context" placeholder="Audience, situation, background, goals, source material, etc."></textarea>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="costar">
+            <label for="mccpb-objective">Objective</label>
+            <textarea id="mccpb-objective" placeholder="What is the goal of the output?"></textarea>
+          </div>
+          <div class="mcc-pb__two" data-mccpb-fw="costar">
+            <div class="mcc-pb__field">
+              <label for="mccpb-style">Style</label>
+              <input id="mccpb-style" type="text" placeholder="clear, practical, plain-language">
+            </div>
+            <div class="mcc-pb__field">
+              <label for="mccpb-tone">Tone</label>
+              <input id="mccpb-tone" type="text" placeholder="warm, confident, direct">
+            </div>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="costar">
+            <label for="mccpb-audience">Audience</label>
+            <input id="mccpb-audience" type="text" placeholder="College faculty new to AI">
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="rtcf costar">
+            <label for="mccpb-format">Response format</label>
+            <textarea id="mccpb-format" placeholder="Use headings, bullets, a table, word count, etc."></textarea>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="costar">
+            <label for="mccpb-constraints">Constraints, examples, or things to avoid</label>
+            <textarea id="mccpb-constraints" placeholder="Avoid jargon. Include 3 examples. Keep it human."></textarea>
+          </div>
+        </div>
+
+        <!-- Image Prompt Fields -->
+        <div id="mccpb-image-fields" class="mcc-pb__subsection mcc-pb__is-hidden">
+          <h3>Image prompt details</h3>
+          <div class="mcc-pb__field" data-mccpb-fw="sss ssclcm">
+            <label for="mccpb-subject">Subject</label>
+            <textarea id="mccpb-subject" placeholder="Main visual focus. Be specific."></textarea>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="sss ssclcm">
+            <label for="mccpb-setting">Setting or context</label>
+            <textarea id="mccpb-setting" placeholder="Where is it? What is happening?"></textarea>
+          </div>
+          <div class="mcc-pb__field" data-mccpb-fw="sss">
+            <label for="mccpb-image-style-basic">Style</label>
+            <input id="mccpb-image-style-basic" type="text" placeholder="clean flat vector illustration">
+          </div>
+          <div class="mcc-pb__two" data-mccpb-fw="ssclcm">
+            <div class="mcc-pb__field">
+              <label for="mccpb-camera">Composition or camera</label>
+              <input id="mccpb-camera" type="text" placeholder="wide shot, eye level, rule of thirds">
+            </div>
+            <div class="mcc-pb__field">
+              <label for="mccpb-lighting">Lighting</label>
+              <input id="mccpb-lighting" type="text" placeholder="soft natural window light">
+            </div>
+          </div>
+          <div class="mcc-pb__two" data-mccpb-fw="ssclcm">
+            <div class="mcc-pb__field">
+              <label for="mccpb-color-style">Color and style</label>
+              <input id="mccpb-color-style" type="text" placeholder="blue and orange palette, editorial style">
+            </div>
+            <div class="mcc-pb__field">
+              <label for="mccpb-mood">Mood and modifiers</label>
+              <input id="mccpb-mood" type="text" placeholder="optimistic, polished, no clutter">
+            </div>
+          </div>
+          <div class="mcc-pb__two">
+            <div class="mcc-pb__field">
+              <label for="mccpb-aspect-ratio">Aspect ratio</label>
+              <select id="mccpb-aspect-ratio">
+                <option>16:9 landscape</option>
+                <option>1:1 square</option>
+                <option>4:5 portrait</option>
+                <option>2:3 portrait</option>
+                <option>9:16 vertical</option>
+                <option>3:2 landscape</option>
+              </select>
+            </div>
+            <div class="mcc-pb__field">
+              <label for="mccpb-text-in-image">Text to render in image</label>
+              <input id="mccpb-text-in-image" type="text" placeholder='"Prompt Better"'>
+            </div>
+          </div>
+          <div class="mcc-pb__field">
+            <label for="mccpb-avoid">Avoid or exclude</label>
+            <textarea id="mccpb-avoid" placeholder="no blurry text, no extra fingers, no watermark"></textarea>
+            <p class="mcc-pb__hint">For Ideogram, this can be pasted into the negative prompt field.</p>
+          </div>
+        </div>
+
+        <!-- Optional Finishing Touches -->
+        <div class="mcc-pb__subsection">
+          <h3>Optional finishing touches</h3>
+          <div class="mcc-pb__field">
+            <label for="mccpb-source-content">Source content to include</label>
+            <textarea id="mccpb-source-content" placeholder="Paste draft text, notes, data, or image-editing instructions here."></textarea>
+          </div>
+          <div class="mcc-pb__two">
+            <div class="mcc-pb__field">
+              <label for="mccpb-length">Desired length</label>
+              <input id="mccpb-length" type="text" placeholder="250 words, 6 bullets, one page">
+            </div>
+            <div class="mcc-pb__field">
+              <label for="mccpb-iteration">Iteration request</label>
+              <input id="mccpb-iteration" type="text" placeholder="Ask me 3 questions first if unclear.">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- Generated Prompt Output -->
+    <aside class="mcc-pb__card" aria-labelledby="mccpb-output-heading">
+      <div class="mcc-pb__card-head">
+        <h2 id="mccpb-output-heading">Your generated prompt</h2>
+        <p>Copy this into your AI tool, then refine one thing at a time.</p>
+      </div>
+      <div class="mcc-pb__card-body">
+        <div class="mcc-pb__output-toolbar">
+          <span class="mcc-pb__status" id="mccpb-status" role="status" aria-live="polite">Ready.</span>
+          <span class="mcc-pb__btn-row">
+            <button type="button" class="mcc-pb__btn" id="mccpb-copy-btn">Copy prompt</button>
+            <button type="button" class="mcc-pb__btn" id="mccpb-download-btn">Download prompt</button>
+            <button type="button" class="mcc-pb__btn mcc-pb__btn--primary" id="mccpb-reset-btn">Reset to sample</button>
+          </span>
+        </div>
+        <label class="mcc-pb__field-label" for="mccpb-output" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Generated prompt text</label>
+        <textarea id="mccpb-output" class="mcc-pb__output" readonly></textarea>
+        <div class="mcc-pb__pills" id="mccpb-pills" aria-label="Prompt summary tags"></div>
+        <div class="mcc-pb__checks" id="mccpb-checks" aria-label="Prompt quality checklist"></div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- Examples Panel -->
+<section class="mcc-pb__panel" id="mccpb-panel-examples" role="tabpanel" aria-labelledby="mccpb-tab-examples" tabindex="0" hidden>
+  <p style="margin-top:0;color:var(--mcc-pb-muted)">Select a framework below to see when to use it and a filled-in example.</p>
+
+  <details class="mcc-pb__accordion" open>
+    <summary>R-T-C-F: Basic text prompt</summary>
+    <div class="mcc-pb__accordion-body">
+      <p>Fast text prompts for daily writing, summarizing, revising, and brainstorming.</p>
+      <pre class="mcc-pb__example-code">Role: Act as a friendly instructional designer.
 Task: Rewrite this announcement so it is clearer for online students.
-
 Context: Students are in Week 1 and may be new to Brightspace.
+Format: Use a short heading, two brief paragraphs, and a 3-item checklist.</pre>
+    </div>
+  </details>
 
-Format: Use a short heading, two brief paragraphs, and a 3-item checklist.</pre></div></article>
-        <article class="example"><div class="body"><h3>CO-STAR+ example</h3><pre>Context: Our college is launching a faculty workshop on AI literacy.
-
+  <details class="mcc-pb__accordion">
+    <summary>CO-STAR+: Advanced text prompt</summary>
+    <div class="mcc-pb__accordion-body">
+      <p>More control over audience, tone, style, structure, and constraints. Best for polished, public-facing writing.</p>
+      <pre class="mcc-pb__example-code">Context: Our college is launching a faculty workshop on AI literacy.
 Objective: Write a promotional email that encourages faculty to register.
-
 Style: Clear, practical, and human.
-
 Tone: Encouraging and not salesy.
-
 Audience: Faculty who are curious about AI.
+Response: Subject line, 180-word email, and 3 bullets. Avoid jargon.</pre>
+    </div>
+  </details>
 
-Response: Subject line, 180-word email, and 3 bullets. Avoid jargon.</pre></div></article>
-        <article class="example"><div class="body"><h3>S-S-S example</h3><pre>A cozy independent coffee shop interior with a steaming latte on a wooden table, early morning light through large windows, warm photorealistic photo, 16:9 landscape.</pre></div></article>
-        <article class="example"><div class="body"><h3>SSCL-CM example</h3><pre>A community college instructor helping students use laptops, modern classroom, wide shot at eye level, soft natural window light, bright blue and orange accents, clean editorial illustration style, optimistic professional mood, 16:9 landscape, avoid clutter and distorted hands.</pre></div></article>
-      </div>
-    </section>
+  <details class="mcc-pb__accordion">
+    <summary>S-S-S + Size: Basic image prompt</summary>
+    <div class="mcc-pb__accordion-body">
+      <p>Simple image prompts that name subject, setting, style, and aspect ratio. Good for quick visuals.</p>
+      <pre class="mcc-pb__example-code">A cozy independent coffee shop interior with a steaming latte on a wooden table,
+early morning light through large windows, warm photorealistic photo, 16:9 landscape.</pre>
+    </div>
+  </details>
 
-    <section class="panel" id="panel-instructions">
-      <div class="instructions">
-        <article class="box"><h2>How to use it</h2><ol><li>Choose the framework that matches your task.</li><li>Select the AI tool and output type.</li><li>Answer the guided questions.</li><li>Review the generated prompt and quality checks.</li><li>Click Copy prompt and paste it into your AI tool.</li><li>Iterate by changing one thing at a time.</li></ol><div class="callout"><strong>Best habit:</strong> Your first prompt is a draft. Improve it through follow-up requests.</div></article>
-        <article class="box"><h2>Which framework?</h2><ul><li><strong>R-T-C-F:</strong> Everyday text tasks.</li><li><strong>CO-STAR+:</strong> Polished public-facing text.</li><li><strong>S-S-S + Size:</strong> Quick image prompts.</li><li><strong>SSCL-CM:</strong> Detailed, higher-quality visuals.</li></ul><div class="callout"><strong>Image tip:</strong> Describe what the camera would see and put the most important detail first.</div></article>
-        <article class="box"><h2>Platform tips</h2><ul><li><strong>ChatGPT:</strong> Great for natural back-and-forth refinement.</li><li><strong>Claude:</strong> Likes clearly labeled sections.</li><li><strong>Gemini:</strong> Good for concise prompts and Google Workspace contexts.</li><li><strong>Ideogram:</strong> Strong for image text and typography.</li></ul></article>
-        <article class="box"><h2>Before publishing</h2><ul><li>Verify factual claims.</li><li>Revise the voice so it sounds human.</li><li>Check audience, tone, and purpose.</li><li>For images, inspect text, hands, faces, and logos.</li></ul></article>
-      </div>
-    </section>
-  </main>
-  <p class="footer">Built for structured prompting, useful iteration, and fewer cursed blank-box moments.</p>
-</div>
+  <details class="mcc-pb__accordion">
+    <summary>SSCL-CM: Advanced image prompt</summary>
+    <div class="mcc-pb__accordion-body">
+      <p>Detailed image prompts with camera, lighting, color, and mood control. Best for higher-quality visuals.</p>
+      <pre class="mcc-pb__example-code">A community college instructor helping students use laptops, modern classroom,
+wide shot at eye level, soft natural window light, bright blue and orange accents,
+clean editorial illustration style, optimistic professional mood, 16:9 landscape,
+avoid clutter and distorted hands.</pre>
+    </div>
+  </details>
+</section>
+
+<!-- Instructions Panel -->
+<section class="mcc-pb__panel" id="mccpb-panel-instructions" role="tabpanel" aria-labelledby="mccpb-tab-instructions" tabindex="0" hidden>
+
+  <ol class="mcc-pb__ordered">
+    <li>Choose the framework that matches your task.</li>
+    <li>Select the AI tool you plan to use.</li>
+    <li>Answer the guided questions in the form.</li>
+    <li>Review the generated prompt and the quality checklist.</li>
+    <li>Select <strong>Copy prompt</strong> and paste it into your AI tool.</li>
+    <li>Iterate by changing one thing at a time.</li>
+  </ol>
+
+  <div class="mcc-pb__callout">
+    <strong>Best habit:</strong> Treat your first prompt as a draft. Improve it through follow-up requests rather than starting over.
+  </div>
+
+  <details class="mcc-pb__accordion" style="margin-top:20px">
+    <summary>Which framework should I use?</summary>
+    <div class="mcc-pb__accordion-body">
+      <p><strong>R-T-C-F:</strong> Everyday text tasks like emails, announcements, and quick rewrites.</p>
+      <p><strong>CO-STAR+:</strong> Polished, public-facing text where tone and audience matter.</p>
+      <p><strong>S-S-S + Size:</strong> Quick image prompts when you just need a visual fast.</p>
+      <p style="margin-bottom:0"><strong>SSCL-CM:</strong> Detailed, higher-quality visuals where lighting, color, and composition matter.</p>
+    </div>
+  </details>
+
+  <details class="mcc-pb__accordion">
+    <summary>Platform tips</summary>
+    <div class="mcc-pb__accordion-body">
+      <p><strong>ChatGPT:</strong> Great for natural back-and-forth refinement.</p>
+      <p><strong>Claude:</strong> Responds well to clearly labeled sections.</p>
+      <p><strong>Gemini:</strong> Good for concise prompts and Google Workspace contexts.</p>
+      <p style="margin-bottom:0"><strong>Ideogram:</strong> Strong for image text and typography.</p>
+    </div>
+  </details>
+
+  <details class="mcc-pb__accordion">
+    <summary>Before you publish or submit AI-assisted work</summary>
+    <div class="mcc-pb__accordion-body">
+      <p>Verify factual claims before using AI-generated text or images.</p>
+      <p>Revise the wording so the final version sounds like you, not like a generic AI response.</p>
+      <p>Check that the tone, audience, and purpose still match your original goal.</p>
+      <p style="margin-bottom:0">For images, inspect text, hands, faces, and logos closely before using them.</p>
+    </div>
+  </details>
+
+</section>
+
 <script>
-'use strict';
-const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-const fields=['role','task','context','objective','style','tone','audience','format','constraints','subject','setting','imageStyleBasic','camera','lighting','colorStyle','mood','aspectRatio','textInImage','avoid','sourceContent','length','iteration'].reduce((o,id)=>(o[id]=$('#'+id),o),{});
-const out=$('#promptOutput'),status=$('#status'),pills=$('#pills'),checks=$('#checks'),tool=$('#tool'),mode=$('#outputMode');
-const samples={rtcf:{role:'Act as an instructional designer and accessibility specialist',task:'Create a clear prompt that helps faculty revise an online course announcement',context:'The audience is college faculty who use Brightspace. The announcement should be easy for students to scan and should use plain language.',format:'Return a polished announcement with a short heading, two brief paragraphs, and a 3-item student checklist.',length:'Under 220 words',iteration:'If anything is unclear, ask up to 3 clarifying questions before drafting.'},costar:{role:'Act as a senior instructional designer',context:'Our college is creating a short faculty training resource about better AI prompting.',objective:'Write a practical one-page handout that helps faculty write better prompts for teaching and course design tasks.',style:'Plain-language, organized, practical',tone:'Supportive, confident, and direct',audience:'College faculty who are curious about AI but do not want technical jargon',format:'Use a title, short intro, 4-step process, and 3 example prompts.',constraints:'Avoid hype. Avoid scare tactics. Include a reminder to verify factual claims.',length:'One page'},sss:{subject:'A community college instructor helping a small group of students use laptops',setting:'A bright modern classroom with collaborative tables and subtle campus colors',imageStyleBasic:'Clean flat vector illustration with friendly shapes and readable visual hierarchy',aspectRatio:'16:9 landscape',textInImage:'"Prompt Better"',avoid:'No distorted hands, no cluttered background, no tiny unreadable text'},ssclcm:{subject:'A confident faculty member presenting an AI prompt-building workshop to adult learners',setting:'A modern training room with laptops, sticky notes, and a large display screen',camera:'Medium-wide shot, eye level, rule of thirds, subject slightly left of center',lighting:'Soft natural window light with gentle fill light',colorStyle:'Bright blue, teal, and orange accents, clean editorial illustration style',mood:'Curious, professional, energetic, polished',aspectRatio:'16:9 landscape',textInImage:'"Prompt Builder"',avoid:'No fake logos, no blurry text, no extra fingers, no watermark'}};
-function v(id){return String(fields[id]?.value||'').trim()}function fw(){return document.querySelector('input[name="framework"]:checked')?.value||'rtcf'}function esc(x){return String(x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function tname(){return {general:'General AI tool',chatgpt:'ChatGPT',claude:'Claude',gemini:'Gemini',ideogram:'Ideogram'}[tool.value]||'General AI tool'}function fname(f){return {rtcf:'R-T-C-F',costar:'CO-STAR+',sss:'S-S-S + Size',ssclcm:'SSCL-CM'}[f]||'R-T-C-F'}
-function prefix(f){let img=f==='sss'||f==='ssclcm';if(tool.value==='claude'&&!img)return 'Use the labeled sections below to complete the request.\n\n';if(tool.value==='gemini')return img?'Create an image using the following prompt. Follow the visual details closely.\n\n':'Complete the following request directly and concisely.\n\n';if(tool.value==='chatgpt')return img?'Generate an image using this prompt. Preserve the key subject, style, lighting, and aspect ratio.\n\n':'Complete the following request. Use the context, format, and constraints where possible.\n\n';if(tool.value==='ideogram')return 'Image prompt for Ideogram. Render quoted text accurately and keep text short and readable.\n\n';return ''}
-function buildRTCF(){let p=[];if(v('role'))p.push('Role: '+v('role')+'.');if(v('task'))p.push('Task: '+v('task'));if(v('context'))p.push('Context: '+v('context'));if(v('format'))p.push('Format: '+v('format'));if(v('length'))p.push('Length: '+v('length'));if(v('constraints'))p.push('Constraints: '+v('constraints'));if(v('sourceContent'))p.push('Source content:\n'+v('sourceContent'));if(v('iteration'))p.push('Before answering: '+v('iteration'));return prefix('rtcf')+(p.join('\n\n')||'Role:\n\nTask:\n\nContext:\n\nFormat:')}
-function buildCostar(){if(tool.value==='claude'){let s=[];['role','context','objective','style','tone','audience'].forEach(id=>{if(v(id))s.push('<'+id+'>'+v(id)+'</'+id+'>')});if(v('format'))s.push('<response_format>'+v('format')+'</response_format>');if(v('length'))s.push('<length>'+v('length')+'</length>');if(v('constraints'))s.push('<constraints>'+v('constraints')+'</constraints>');if(v('sourceContent'))s.push('<source_content>\n'+v('sourceContent')+'\n</source_content>');if(v('iteration'))s.push('<instruction>'+v('iteration')+'</instruction>');return prefix('costar')+(s.join('\n\n')||'<context></context>\n\n<objective></objective>\n\n<response_format></response_format>')}let p=[];if(v('role'))p.push('Role: '+v('role')+'.');if(v('context'))p.push('Context: '+v('context'));if(v('objective'))p.push('Objective: '+v('objective'));if(v('style'))p.push('Style: '+v('style'));if(v('tone'))p.push('Tone: '+v('tone'));if(v('audience'))p.push('Audience: '+v('audience'));if(v('format'))p.push('Response format: '+v('format'));if(v('length'))p.push('Length: '+v('length'));if(v('constraints'))p.push('Constraints and examples: '+v('constraints'));if(v('sourceContent'))p.push('Source content:\n'+v('sourceContent'));if(v('iteration'))p.push('Before answering: '+v('iteration'));return prefix('costar')+(p.join('\n\n')||'Context:\n\nObjective:\n\nStyle:\n\nTone:\n\nAudience:\n\nResponse format:')}
-function buildSSS(){let p=[];if(v('subject'))p.push(v('subject'));if(v('setting'))p.push(v('setting'));if(v('imageStyleBasic'))p.push(v('imageStyleBasic'));if(v('textInImage'))p.push('Include the text '+v('textInImage')+' with clean, readable typography.');if(v('aspectRatio'))p.push(v('aspectRatio'));if(v('avoid'))p.push((tool.value==='ideogram'?'Negative prompt: ':'Avoid: ')+v('avoid'));if(v('sourceContent'))p.push('Additional reference or editing instructions: '+v('sourceContent'));return prefix('sss')+(p.join(', ')||'Subject, setting, style, size.')}
-function buildSSCLCM(){let p=[];if(v('subject'))p.push('Subject: '+v('subject'));if(v('setting'))p.push('Setting/context: '+v('setting'));if(v('camera'))p.push('Composition/camera: '+v('camera'));if(v('lighting'))p.push('Lighting: '+v('lighting'));if(v('colorStyle'))p.push('Color/style: '+v('colorStyle'));if(v('mood'))p.push('Mood/modifiers: '+v('mood'));if(v('textInImage'))p.push('Text to render: '+v('textInImage')+'. Keep it accurate and readable.');if(v('aspectRatio'))p.push('Aspect ratio: '+v('aspectRatio'));if(v('avoid'))p.push((tool.value==='ideogram'?'Negative prompt: ':'Avoid: ')+v('avoid'));if(v('sourceContent'))p.push('Additional reference or editing instructions: '+v('sourceContent'));return prefix('ssclcm')+(p.join('\n\n')||'Subject:\n\nSetting/context:\n\nComposition/camera:\n\nLighting:\n\nColor/style:\n\nMood/modifiers:')}
-function updateVisibility(){let f=fw(),img=f==='sss'||f==='ssclcm';$('#textFields').classList.toggle('hidden',img);$('#imageFields').classList.toggle('hidden',!img);mode.value=img?'image':'text';if(img&&tool.value==='claude')tool.value='general';$$('[data-fw]').forEach(n=>n.classList.toggle('hidden',!n.dataset.fw.split(' ').includes(f)));generate()}
-function generate(){let f=fw(),prompt=f==='rtcf'?buildRTCF():f==='costar'?buildCostar():f==='sss'?buildSSS():buildSSCLCM();out.value=prompt;status.textContent=fname(f)+' prompt for '+tname()+'.';renderPills(f);renderChecks(f,prompt)}
-function renderPills(f){let img=f==='sss'||f==='ssclcm',arr=[fname(f),tname(),img?'Image prompt':'Text prompt'];if(!img&&v('format'))arr.push('Format included');if(!img&&v('context'))arr.push('Context included');if(img&&v('lighting'))arr.push('Lighting included');if(img&&v('aspectRatio'))arr.push('Aspect ratio included');pills.innerHTML=arr.map(x=>'<span class="pill">'+esc(x)+'</span>').join('')}
-function renderChecks(f,prompt){let img=f==='sss'||f==='ssclcm';let list=img?[['Specific subject','Name the main visual focus clearly.',!!v('subject')],['Setting included','A setting gives the image context.',!!v('setting')],['Visual style','Style helps avoid generic output.',!!(v('imageStyleBasic')||v('colorStyle'))],['Aspect ratio','Set size before generating.',!!v('aspectRatio')]]:[['Role included','A role gives the AI a useful lens.',!!v('role')],['Task/objective included','The prompt needs a clear action.',!!(v('task')||v('objective'))],['Context included','Context reduces guesswork.',!!v('context')],['Format included','Format shapes the answer.',!!v('format')]];list.push(['Enough detail','A usable prompt usually needs some detail.',prompt.length>=90]);checks.innerHTML=list.map(i=>'<div class="check"><div><strong>'+esc(i[0])+'</strong><span>'+esc(i[1])+'</span></div><span class="badge '+(i[2]?'good':'warn')+'">'+(i[2]?'Good':'Review')+'</span></div>').join('')}
-function loadSample(){let f=fw(),s=samples[f]||{};Object.keys(fields).forEach(k=>{if(k==='aspectRatio')fields[k].value=s[k]||'16:9 landscape';else fields[k].value=s[k]||''});generate()}
-async function copyOut(){try{await navigator.clipboard.writeText(out.value);status.textContent='Prompt copied.'}catch(e){out.select();document.execCommand('copy');status.textContent='Prompt selected. Use Ctrl+C or Cmd+C if needed.'}}
-function downloadOut(){let blob=new Blob([out.value],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='generated-ai-prompt.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);status.textContent='Prompt downloaded.'}
-function switchTab(name){$$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));$$('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name))}
-document.addEventListener('DOMContentLoaded',()=>{$$('input[name="framework"]').forEach(r=>r.addEventListener('change',()=>{updateVisibility();loadSample()}));$$('input,textarea,select').forEach(x=>{x.addEventListener('input',generate);x.addEventListener('change',generate)});$('#copyBtn').addEventListener('click',copyOut);$('#downloadBtn').addEventListener('click',downloadOut);$('#resetBtn').addEventListener('click',loadSample);$$('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));$$('[data-jump]').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.jump)));updateVisibility();loadSample()});
+(function () {
+  'use strict';
+  var root = document.currentScript.closest('.mcc-pb');
+  var q = function (sel) { return root.querySelector(sel); };
+
+  var fieldIds = ['role','task','context','objective','style','tone','audience','format','constraints',
+    'subject','setting','image-style-basic','camera','lighting','color-style','mood','aspect-ratio',
+    'text-in-image','avoid','source-content','length','iteration'];
+  var fields = {};
+  fieldIds.forEach(function (id) { fields[id] = q('#mccpb-' + id); });
+
+  var out = q('#mccpb-output');
+  var status = q('#mccpb-status');
+  var pills = q('#mccpb-pills');
+  var checks = q('#mccpb-checks');
+  var tool = q('#mccpb-tool');
+  var outputTypeValue = q('#mccpb-output-type-value');
+
+  var samples = {
+    rtcf: { role:'Act as an instructional designer and accessibility specialist', task:'Create a clear prompt that helps faculty revise an online course announcement', context:'The audience is college faculty who use Brightspace. The announcement should be easy for students to scan and should use plain language.', format:'Return a polished announcement with a short heading, two brief paragraphs, and a 3-item student checklist.', length:'Under 220 words', iteration:'If anything is unclear, ask up to 3 clarifying questions before drafting.' },
+    costar: { role:'Act as a senior instructional designer', context:'Our college is creating a short faculty training resource about better AI prompting.', objective:'Write a practical one-page handout that helps faculty write better prompts for teaching and course design tasks.', style:'Plain-language, organized, practical', tone:'Supportive, confident, and direct', audience:'College faculty who are curious about AI but do not want technical jargon', format:'Use a title, short intro, 4-step process, and 3 example prompts.', constraints:'Avoid hype. Avoid scare tactics. Include a reminder to verify factual claims.', length:'One page' },
+    sss: { subject:'A community college instructor helping a small group of students use laptops', setting:'A bright modern classroom with collaborative tables and subtle campus colors', 'image-style-basic':'Clean flat vector illustration with friendly shapes and readable visual hierarchy', 'aspect-ratio':'16:9 landscape', 'text-in-image':'"Prompt Better"', avoid:'No distorted hands, no cluttered background, no tiny unreadable text' },
+    ssclcm: { subject:'A confident faculty member presenting an AI prompt-building workshop to adult learners', setting:'A modern training room with laptops, sticky notes, and a large display screen', camera:'Medium-wide shot, eye level, rule of thirds, subject slightly left of center', lighting:'Soft natural window light with gentle fill light', 'color-style':'Bright blue, teal, and orange accents, clean editorial illustration style', mood:'Curious, professional, energetic, polished', 'aspect-ratio':'16:9 landscape', 'text-in-image':'"Prompt Builder"', avoid:'No fake logos, no blurry text, no extra fingers, no watermark' }
+  };
+
+  function v(id) { return String((fields[id] && fields[id].value) || '').trim(); }
+  function fw() { var el = root.querySelector('input[name="mccpb-framework"]:checked'); return el ? el.value : 'rtcf'; }
+  function esc(x) { return String(x).replace(/[&<>"']/g, function (m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]; }); }
+  function toolName() { return ({general:'General AI tool', chatgpt:'ChatGPT', claude:'Claude', gemini:'Gemini', ideogram:'Ideogram'})[tool.value] || 'General AI tool'; }
+  function frameworkName(f) { return ({rtcf:'R-T-C-F', costar:'CO-STAR+', sss:'S-S-S + Size', ssclcm:'SSCL-CM'})[f] || 'R-T-C-F'; }
+
+  function prefix(f) {
+    var img = f === 'sss' || f === 'ssclcm';
+    if (tool.value === 'claude' && !img) return 'Use the labeled sections below to complete the request.\n\n';
+    if (tool.value === 'gemini') return img ? 'Create an image using the following prompt. Follow the visual details closely.\n\n' : 'Complete the following request directly and concisely.\n\n';
+    if (tool.value === 'chatgpt') return img ? 'Generate an image using this prompt. Preserve the key subject, style, lighting, and aspect ratio.\n\n' : 'Complete the following request. Use the context, format, and constraints where possible.\n\n';
+    if (tool.value === 'ideogram') return 'Image prompt for Ideogram. Render quoted text accurately and keep text short and readable.\n\n';
+    return '';
+  }
+
+  function buildRTCF() {
+    var p = [];
+    if (v('role')) p.push('Role: ' + v('role') + '.');
+    if (v('task')) p.push('Task: ' + v('task'));
+    if (v('context')) p.push('Context: ' + v('context'));
+    if (v('format')) p.push('Format: ' + v('format'));
+    if (v('length')) p.push('Length: ' + v('length'));
+    if (v('constraints')) p.push('Constraints: ' + v('constraints'));
+    if (v('source-content')) p.push('Source content:\n' + v('source-content'));
+    if (v('iteration')) p.push('Before answering: ' + v('iteration'));
+    return prefix('rtcf') + (p.join('\n\n') || 'Role:\n\nTask:\n\nContext:\n\nFormat:');
+  }
+
+  function buildCostar() {
+    if (tool.value === 'claude') {
+      var s = [];
+      ['role','context','objective','style','tone','audience'].forEach(function (id) { if (v(id)) s.push('<' + id + '>' + v(id) + '</' + id + '>'); });
+      if (v('format')) s.push('<response_format>' + v('format') + '</response_format>');
+      if (v('length')) s.push('<length>' + v('length') + '</length>');
+      if (v('constraints')) s.push('<constraints>' + v('constraints') + '</constraints>');
+      if (v('source-content')) s.push('<source_content>\n' + v('source-content') + '\n</source_content>');
+      if (v('iteration')) s.push('<instruction>' + v('iteration') + '</instruction>');
+      return prefix('costar') + (s.join('\n\n') || '<context></context>\n\n<objective></objective>\n\n<response_format></response_format>');
+    }
+    var p = [];
+    if (v('role')) p.push('Role: ' + v('role') + '.');
+    if (v('context')) p.push('Context: ' + v('context'));
+    if (v('objective')) p.push('Objective: ' + v('objective'));
+    if (v('style')) p.push('Style: ' + v('style'));
+    if (v('tone')) p.push('Tone: ' + v('tone'));
+    if (v('audience')) p.push('Audience: ' + v('audience'));
+    if (v('format')) p.push('Response format: ' + v('format'));
+    if (v('length')) p.push('Length: ' + v('length'));
+    if (v('constraints')) p.push('Constraints and examples: ' + v('constraints'));
+    if (v('source-content')) p.push('Source content:\n' + v('source-content'));
+    if (v('iteration')) p.push('Before answering: ' + v('iteration'));
+    return prefix('costar') + (p.join('\n\n') || 'Context:\n\nObjective:\n\nStyle:\n\nTone:\n\nAudience:\n\nResponse format:');
+  }
+
+  function buildSSS() {
+    var p = [];
+    if (v('subject')) p.push(v('subject'));
+    if (v('setting')) p.push(v('setting'));
+    if (v('image-style-basic')) p.push(v('image-style-basic'));
+    if (v('text-in-image')) p.push('Include the text ' + v('text-in-image') + ' with clean, readable typography.');
+    if (v('aspect-ratio')) p.push(v('aspect-ratio'));
+    if (v('avoid')) p.push((tool.value === 'ideogram' ? 'Negative prompt: ' : 'Avoid: ') + v('avoid'));
+    if (v('source-content')) p.push('Additional reference or editing instructions: ' + v('source-content'));
+    return prefix('sss') + (p.join(', ') || 'Subject, setting, style, size.');
+  }
+
+  function buildSSCLCM() {
+    var p = [];
+    if (v('subject')) p.push('Subject: ' + v('subject'));
+    if (v('setting')) p.push('Setting/context: ' + v('setting'));
+    if (v('camera')) p.push('Composition/camera: ' + v('camera'));
+    if (v('lighting')) p.push('Lighting: ' + v('lighting'));
+    if (v('color-style')) p.push('Color/style: ' + v('color-style'));
+    if (v('mood')) p.push('Mood/modifiers: ' + v('mood'));
+    if (v('text-in-image')) p.push('Text to render: ' + v('text-in-image') + '. Keep it accurate and readable.');
+    if (v('aspect-ratio')) p.push('Aspect ratio: ' + v('aspect-ratio'));
+    if (v('avoid')) p.push((tool.value === 'ideogram' ? 'Negative prompt: ' : 'Avoid: ') + v('avoid'));
+    if (v('source-content')) p.push('Additional reference or editing instructions: ' + v('source-content'));
+    return prefix('ssclcm') + (p.join('\n\n') || 'Subject:\n\nSetting/context:\n\nComposition/camera:\n\nLighting:\n\nColor/style:\n\nMood/modifiers:');
+  }
+
+  function updateVisibility() {
+    var f = fw();
+    var img = f === 'sss' || f === 'ssclcm';
+    q('#mccpb-text-fields').classList.toggle('mcc-pb__is-hidden', img);
+    q('#mccpb-image-fields').classList.toggle('mcc-pb__is-hidden', !img);
+    outputTypeValue.textContent = img ? 'Image prompt' : 'Text prompt';
+    if (img && tool.value === 'claude') tool.value = 'general';
+    root.querySelectorAll('[data-mccpb-fw]').forEach(function (n) {
+      n.classList.toggle('mcc-pb__is-hidden', n.dataset.mccpbFw.split(' ').indexOf(f) === -1);
+    });
+    generate();
+  }
+
+  function generate() {
+    var f = fw();
+    var prompt = f === 'rtcf' ? buildRTCF() : f === 'costar' ? buildCostar() : f === 'sss' ? buildSSS() : buildSSCLCM();
+    out.value = prompt;
+    status.textContent = frameworkName(f) + ' prompt for ' + toolName() + '.';
+    renderPills(f);
+    renderChecks(f, prompt);
+  }
+
+  function renderPills(f) {
+    var img = f === 'sss' || f === 'ssclcm';
+    var arr = [frameworkName(f), toolName(), img ? 'Image prompt' : 'Text prompt'];
+    if (!img && v('format')) arr.push('Format included');
+    if (!img && v('context')) arr.push('Context included');
+    if (img && v('lighting')) arr.push('Lighting included');
+    if (img && v('aspect-ratio')) arr.push('Aspect ratio included');
+    pills.innerHTML = arr.map(function (x) { return '<span class="mcc-pb__pill">' + esc(x) + '</span>'; }).join('');
+  }
+
+  function renderChecks(f, prompt) {
+    var img = f === 'sss' || f === 'ssclcm';
+    var list = img
+      ? [['Specific subject','Name the main visual focus clearly.', !!v('subject')],
+         ['Setting included','A setting gives the image context.', !!v('setting')],
+         ['Visual style','Style helps avoid generic output.', !!(v('image-style-basic') || v('color-style'))],
+         ['Aspect ratio','Set size before generating.', !!v('aspect-ratio')]]
+      : [['Role included','A role gives the AI a useful lens.', !!v('role')],
+         ['Task/objective included','The prompt needs a clear action.', !!(v('task') || v('objective'))],
+         ['Context included','Context reduces guesswork.', !!v('context')],
+         ['Format included','Format shapes the answer.', !!v('format')]];
+    list.push(['Enough detail','A usable prompt usually needs some detail.', prompt.length >= 90]);
+    checks.innerHTML = list.map(function (i) {
+      return '<div class="mcc-pb__check"><div><strong>' + esc(i[0]) + '</strong><span>' + esc(i[1]) + '</span></div><span class="mcc-pb__badge ' + (i[2] ? 'mcc-pb__badge--good' : 'mcc-pb__badge--warn') + '">' + (i[2] ? 'Good' : 'Review') + '</span></div>';
+    }).join('');
+  }
+
+  function loadSample() {
+    var f = fw();
+    var s = samples[f] || {};
+    Object.keys(fields).forEach(function (k) {
+      if (!fields[k]) return;
+      if (k === 'aspect-ratio') fields[k].value = s[k] || '16:9 landscape';
+      else fields[k].value = s[k] || '';
+    });
+    generate();
+  }
+
+  function copyOut() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(out.value).then(function () {
+        status.textContent = 'Prompt copied.';
+      }, function () { fallbackCopy(); });
+    } else {
+      fallbackCopy();
+    }
+    function fallbackCopy() {
+      out.select();
+      try { document.execCommand('copy'); status.textContent = 'Prompt selected. Use Ctrl+C or Cmd+C if needed.'; } catch (e) { status.textContent = 'Select the text and copy it manually.'; }
+    }
+  }
+
+  function downloadOut() {
+    var blob = new Blob([out.value], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'generated-ai-prompt.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    status.textContent = 'Prompt downloaded.';
+  }
+
+  function switchTab(name) {
+    root.querySelectorAll('.mcc-pb__tab').forEach(function (t) {
+      var selected = t.dataset.mccpbTab === name;
+      t.setAttribute('aria-selected', selected);
+      t.tabIndex = selected ? 0 : -1;
+    });
+    root.querySelectorAll('.mcc-pb__panel').forEach(function (p) {
+      var active = p.id === 'mccpb-panel-' + name;
+      p.classList.toggle('is-active', active);
+      p.hidden = !active;
+    });
+  }
+
+  var tabButtons = root.querySelectorAll('.mcc-pb__tab');
+  tabButtons.forEach(function (btn, i) {
+    btn.addEventListener('click', function () { switchTab(btn.dataset.mccpbTab); btn.focus(); });
+    btn.addEventListener('keydown', function (event) {
+      var list = Array.prototype.slice.call(tabButtons);
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        var dir = event.key === 'ArrowRight' ? 1 : -1;
+        var next = list[(i + dir + list.length) % list.length];
+        switchTab(next.dataset.mccpbTab);
+        next.focus();
+      }
+    });
+  });
+
+  root.querySelectorAll('input[name="mccpb-framework"]').forEach(function (r) {
+    r.addEventListener('change', function () { updateVisibility(); loadSample(); });
+  });
+  root.querySelectorAll('#mccpb-form input, #mccpb-form textarea, #mccpb-form select').forEach(function (x) {
+    x.addEventListener('input', generate);
+    x.addEventListener('change', generate);
+  });
+  tool.addEventListener('change', generate);
+  q('#mccpb-copy-btn').addEventListener('click', copyOut);
+  q('#mccpb-download-btn').addEventListener('click', downloadOut);
+  q('#mccpb-reset-btn').addEventListener('click', loadSample);
+
+  updateVisibility();
+  loadSample();
+})();
 </script>
-</body>
-</html>
+</div>
